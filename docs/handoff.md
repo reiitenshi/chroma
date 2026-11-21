@@ -119,6 +119,13 @@ panels differ; Deck work is phase 2.
   the app take chroma's preview out of Steam (it sits above CSS Loader's themes).
 - Not yet tested: an exported theme loaded by CSS Loader on the Deck; the AppImage on the Deck.
 
+## 0.3.0 (2026-11-21, from the Deck)
+
+- Exported themes broke under CSS Loader on the Deck (escaped selectors; see design.md, "Export is
+  CSS Loader-safe"). Fixed in the export; dev-page export no longer needs Steam. Checked: exports
+  with Steam closed hold no backslash or backtick, and a browser parses them to the last rule.
+  Not yet checked here: the 0.3.0 theme under CSS Loader on the Deck.
+
 ## Next step: 3.0, on the Deck (user)
 
 Developed on the Steam Deck for edge cases: Deck-only screens (trawl them with the Deck's Quick

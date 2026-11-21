@@ -224,6 +224,14 @@ follow. chroma keys on steamui-watch names and DOM classes, never on webpack int
   is a folder of two files (the CSS is 400 KB), and CSS Loader only installs zips from its store,
   so the zip is extracted into `~/homebrew/themes/` by hand. Steam isn't needed: without it the
   build is the profile's and the palette comes from the stored snapshot.
+- Export is CSS Loader-safe (0.3.0, found on the Deck): CSS Loader 2.1.3 (`css_inject.py`) doubles
+  every backslash and escapes backticks, so Steam's escaped selectors (`.KeyTheme_\[`, the keyboard
+  keys) reach Steam as `\\[`, an attribute selector that never closes, and Steam drops the rest of
+  the sheet, the parts layer included. The export (not the live preview) rewrites escaped classes
+  as `[class~="…"]` (same match and specificity; CSS Loader's class translation leaves it alone)
+  and leaves out single-line rules that still hold a backslash or backtick (the backtick key: 2
+  rules; 80 rewritten), throwing on anything else. Export also no longer needs Steam from the dev
+  page (it read Steam's build before loading the profile).
 - Best effort per Steam build (user, 2026-11-21): chroma is marked as made for stable build
   1794536281 (README, page footer, `MADE_FOR`); on another build the footer says so.
 - Public repo: the catalogue's quoted on-screen samples had friend names; replaced with "Friend

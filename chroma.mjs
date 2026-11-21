@@ -1006,13 +1006,47 @@ function mergeStates(part, states) {
 // on: which themes run is CSS Loader's business (user, 2026-11-21).
 const themeId = name => `chroma-${name.trim().toLowerCase().replace(/[^\w-]+/g, '-')}`;
 
+// CSS Loader (2.1.3, css_inject.py) doubles every backslash in a theme, twice, and escapes
+// backticks, and Steam gets the result as is. An escaped selector (Steam's keyboard keys:
+// .KeyTheme_\[) then arrives as \\[: the [ opens an attribute selector that never closes,
+// and Steam drops the rest of the sheet, the parts layer included (header, footer, tabs…).
+// So the export carries no backslash or backtick: an escaped class becomes [class~="…"] (same
+// match and specificity, and CSS Loader's class translation leaves it alone); a rule that still
+// has one is left out. Only single-line rules can be left out (the palette's); anything else throws.
+const ESCAPED_CLASS_RE = /\.((?:[\w-]|\\[^0-9a-fA-F\n])+)/g;
+function cssLoaderSafe(css) {
+  let rewritten = 0, dropped = 0;
+  const lines = css.split('\n').flatMap(line => {
+    if (!/[\\`]/.test(line)) return [line];
+    const out = line.replace(ESCAPED_CLASS_RE, (tok, name) => {
+      if (!name.includes('\\')) return tok;
+      const plain = name.replace(/\\(.)/g, '$1');
+      if (/[\\`\n]/.test(plain)) return tok;
+      const q = plain.includes('"') ? "'" : '"';
+      if (plain.includes(q)) return tok;
+      rewritten++;
+      return `[class~=${q}${plain}${q}]`;
+    });
+    if (!/[\\`]/.test(out)) return [out];
+    const opens = (out.match(/{/g) ?? []).length;
+    if (!opens || opens !== (out.match(/}/g) ?? []).length) {
+      throw new Error(`Export: CSS Loader would break on this line: ${out.slice(0, 200)}`);
+    }
+    dropped++;
+    return [];
+  });
+  return { css: lines.join('\n'), rewritten, dropped };
+}
+
 async function exportTheme(profile) {
   // Steam isn't needed: without it the build is the profile's, and the palette comes from the
   // stored snapshot.
   const liveBuild = await steamBuild().catch(() => null);
   const build = String(liveBuild ?? profile.steamBuild ?? MADE_FOR);
   const { catalog, exact } = loadCatalog(build);
-  const { css, skipped } = await composeCss(catalog, profile, profile.edits, profile.followMaster !== false, build, !!liveBuild);
+  const composed = await composeCss(catalog, profile, profile.edits, profile.followMaster !== false, build, !!liveBuild);
+  const { css, rewritten, dropped } = cssLoaderSafe(composed.css);
+  const skipped = composed.skipped;
   const id = themeId(profile.name);
   const files = {
     'theme.json': JSON.stringify({
@@ -1040,7 +1074,7 @@ async function exportTheme(profile) {
   const note = installed
     ? `In CSS Loader's themes: refresh there and switch on "chroma: ${profile.name}".`
     : 'No CSS Loader here (~/homebrew missing); send the zip.';
-  return { ok: true, id, installed, zip, exactCatalog: exact, skipped, note };
+  return { ok: true, id, installed, zip, exactCatalog: exact, skipped, cssLoader: { rewritten, dropped }, note };
 }
 
 // A zip of text files (deflated), for sending a theme in one file. [[path, text], ...]
@@ -1268,7 +1302,7 @@ const routes = {
     const b = await body(req);
     send(res, 200, await locate(b.part ?? null, b.key ?? null));
   },
-  'POST /api/export': async (req, res) => send(res, 200, await exportTheme(loadProfile(await steamBuild()))),
+  'POST /api/export': async (req, res) => send(res, 200, await exportTheme(loadProfile(await steamBuild().catch(() => MADE_FOR)))),
   'GET /api/status': async (req, res) => send(res, 200, await status()),
   'POST /api/picker/export': async (req, res) => send(res, 200, await pickerExport(await body(req))),
   'POST /api/defaults': async (req, res) => send(res, 200, await showDefaults((await body(req)).on)),
