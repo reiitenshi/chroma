@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- chroma: a hue ring around the template's lavender. -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f49aff"/>
+      <stop offset="0.5" stop-color="#967cb5"/>
+      <stop offset="1" stop-color="#84bdff"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#g)"/>
+  <circle cx="256" cy="256" r="132" fill="none" stroke="#fffafa" stroke-width="44" stroke-dasharray="620 210" stroke-linecap="round" transform="rotate(-40 256 256)"/>
+  <circle cx="256" cy="256" r="40" fill="#fffafa"/>
+</svg>

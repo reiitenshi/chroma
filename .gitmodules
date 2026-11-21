@@ -1,0 +1,3 @@
+[submodule "steam-debug"]
+	path = steam-debug
+	url = https://github.com/kmturley/steam-debug.git

@@ -1,0 +1,1679 @@
+{
+  "steamBuild": 1794536281,
+  "branch": "stable",
+  "cataloged": "2026-11-20",
+  "notes": [
+    "part = steamui-watch key(s); profiles address parts, never hashes.",
+    "selector = the hashes this build's DOM uses. steamui-watch and CSS Loader list several per key; unused ones are dropped.",
+    "Do not export readable names: CSS Loader's css_translations.json maps EventInfo and Title to dead hashes and lacks EventTime.",
+    "props = Steam's computed value before any edit.",
+    "links: a prop with a link follows another part's prop (alpha scales it) until it has its own edit. Steam's 139/220 grey ratio gives EventTime 0.63."
+  ],
+  "parts": [
+    {
+      "part": "J5rxTYCm_BasicHome",
+      "ec": "ec1 ec4",
+      "label": "Home screen",
+      "area": "gamepadui",
+      "page": true,
+      "window": "BigPicture",
+      "selector": "._3LYP1SIxyoky-yW9Ug_1fq",
+      "props": {
+        "background": "radial-gradient(155.42% 100% at 0% 0%, rgb(6, 10, 14) 0%, rgb(14, 20, 27) 100%)",
+        "color": "rgb(220, 222, 223)"
+      },
+      "aliases": [
+        "J5rxTYCm_BasicHome.J5rxTYCm_OpaqueBackground"
+      ],
+      "group": "Home"
+    },
+    {
+      "part": "awNNWnmm_Tab",
+      "ec": "ec4",
+      "label": "Tab",
+      "area": "gamepadtabbedpage",
+      "window": "BigPicture",
+      "selector": "._3eEbSktrstBdLk0dVpnKVI",
+      "props": {
+        "color": "rgb(220, 222, 223)",
+        "background": "rgba(255, 255, 255, 0.15)"
+      },
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "states": {
+        "highlight": {
+          "selectors": [
+            "._3eEbSktrstBdLk0dVpnKVI:hover",
+            "._3eEbSktrstBdLk0dVpnKVI.gpfocus"
+          ],
+          "defaults": {
+            "._3eEbSktrstBdLk0dVpnKVI:hover": {
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(255, 255, 255, 0.15)"
+            },
+            "._3eEbSktrstBdLk0dVpnKVI.gpfocus": {
+              "color": "rgb(35, 38, 46)",
+              "background": "rgb(255, 255, 255)"
+            }
+          },
+          "props": {
+            "color": "rgb(35, 38, 46)",
+            "background": "rgb(255, 255, 255)"
+          }
+        }
+      },
+      "group": "Tabs"
+    },
+    {
+      "part": "awNNWnmm_Tab.awNNWnmm_Selected",
+      "ec": "ec2 ec4",
+      "label": "Tab, selected",
+      "area": "gamepadtabbedpage",
+      "window": "BigPicture",
+      "selector": "._3eEbSktrstBdLk0dVpnKVI._3Gp1bACHx__POxmy6Gd3kG",
+      "props": {
+        "background": "rgba(255, 255, 255, 0.15)",
+        "color": "rgb(255, 255, 255)"
+      },
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "states": {
+        "highlight": {
+          "selectors": [
+            "._3eEbSktrstBdLk0dVpnKVI._3Gp1bACHx__POxmy6Gd3kG:hover"
+          ],
+          "defaults": {
+            "._3eEbSktrstBdLk0dVpnKVI._3Gp1bACHx__POxmy6Gd3kG:hover": {
+              "color": "rgb(255, 255, 255)",
+              "background": "rgba(189, 197, 206, 0.48)"
+            }
+          },
+          "props": {
+            "color": "rgb(255, 255, 255)",
+            "background": "rgba(189, 197, 206, 0.48)"
+          }
+        }
+      },
+      "group": "Tabs"
+    },
+    {
+      "part": "Kp4Buf0X_EventInfo",
+      "ec": "ec3",
+      "label": "What's New",
+      "area": "gamepadhomewhatsnew",
+      "window": "BigPicture",
+      "selector": "._3FDPeEvssr8wktS3dWB-RO, ._3OC7iN2ubQiHWLB7r6Bugz, ._3LyF6X2UzrKOnCPSpoVFeT",
+      "props": {
+        "background": "rgba(255, 255, 255, 0.15)"
+      },
+      "states": {
+        "highlight": {
+          "selectors": [
+            ".gpfocus ._3FDPeEvssr8wktS3dWB-RO",
+            "._2DwCtjG1aNwF90x5KQcPtO:hover ._3FDPeEvssr8wktS3dWB-RO",
+            "._3OC7iN2ubQiHWLB7r6Bugz:hover",
+            ".gpfocus._3OC7iN2ubQiHWLB7r6Bugz",
+            "._3OC7iN2ubQiHWLB7r6Bugz:hover ._3LyF6X2UzrKOnCPSpoVFeT",
+            ".gpfocus ._3LyF6X2UzrKOnCPSpoVFeT"
+          ],
+          "defaults": {
+            ".gpfocus ._3FDPeEvssr8wktS3dWB-RO": {
+              "background": "rgba(172, 178, 201, 0.28)"
+            },
+            "._2DwCtjG1aNwF90x5KQcPtO:hover ._3FDPeEvssr8wktS3dWB-RO": {
+              "background": "rgba(172, 178, 201, 0.28)"
+            },
+            "._3OC7iN2ubQiHWLB7r6Bugz:hover": {
+              "background": "rgba(172, 178, 201, 0.28)"
+            },
+            ".gpfocus._3OC7iN2ubQiHWLB7r6Bugz": {
+              "background": "rgba(172, 178, 201, 0.28)"
+            },
+            "._3OC7iN2ubQiHWLB7r6Bugz:hover ._3LyF6X2UzrKOnCPSpoVFeT": {
+              "background": "rgba(172, 178, 201, 0.28)"
+            },
+            ".gpfocus ._3LyF6X2UzrKOnCPSpoVFeT": {
+              "background": "rgba(172, 178, 201, 0.28)"
+            }
+          },
+          "props": {
+            "background": "rgba(172, 178, 201, 0.28)"
+          }
+        }
+      },
+      "aliases": [
+        "Kp4Buf0X_OuterWrapper Kp4Buf0X_EventInfo",
+        "263GZqVc_RecentlyCompletedItem",
+        "BasicUI 263GZqVc_RecentlyCompletedItem",
+        "263GZqVc_BottomSection",
+        "BasicUI 263GZqVc_BottomSection"
+      ],
+      "notes": "Merged with the Recently updated tile (263GZqVc_RecentlyCompletedItem, user 2026-11-21). Steam gives that tile no hover colour; it takes the caption bar's. Also merged: the tile footer (263GZqVc_BottomSection, Steam 5% white), which sits on the tile, so it stacks on the tile colour.",
+      "group": "What's New"
+    },
+    {
+      "part": "Kp4Buf0X_Title",
+      "ec": "ec4",
+      "label": "News tile title",
+      "area": "gamepadhomewhatsnew",
+      "window": "BigPicture",
+      "selector": "._1OhUuSP_fufxyh1k3PnYpA",
+      "props": {
+        "color": "rgb(220, 222, 223)"
+      },
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "What's New"
+    },
+    {
+      "part": "Kp4Buf0X_EventTime",
+      "ec": "ec4",
+      "label": "News date heading",
+      "area": "gamepadhomewhatsnew",
+      "window": "BigPicture",
+      "selector": "._1xu4iu0Qa3cGcIr-rZAsVb",
+      "props": {
+        "color": "rgb(139, 146, 154)"
+      },
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 0.63
+        }
+      },
+      "group": "What's New"
+    },
+    {
+      "part": "ingame Q3SodnYB_avatarStatus",
+      "label": "Avatar status, in game",
+      "area": "steamavatar",
+      "readable": "steamavatar_avatarStatus",
+      "window": "BigPicture",
+      "selector": ".ingame ._3xUpb5DWXPFNcHHIcv-9pe",
+      "props": {
+        "background": "rgb(89, 191, 64)"
+      },
+      "trawled": "2026-11-20",
+      "aliases": [
+        "GamepadMode ingame Q3SodnYB_avatarStatus"
+      ],
+      "group": "Indicators"
+    },
+    {
+      "part": "online Q3SodnYB_avatarStatus",
+      "label": "Avatar status, online",
+      "area": "steamavatar",
+      "readable": "steamavatar_avatarStatus",
+      "window": "BigPicture",
+      "selector": ".online ._3xUpb5DWXPFNcHHIcv-9pe",
+      "props": {
+        "background": "rgb(76, 180, 255)"
+      },
+      "trawled": "2026-11-20",
+      "aliases": [
+        "GamepadMode online Q3SodnYB_avatarStatus"
+      ],
+      "group": "Indicators"
+    },
+    {
+      "part": "BasicUI hZCRXDi9_GreyBackground",
+      "label": "Game art placeholder",
+      "area": "libraryassetimage",
+      "readable": "libraryassetimage_GreyBackground",
+      "window": "BigPicture",
+      "selector": ".BasicUI ._2E7G8grj_-tgxXbTXs1t2E",
+      "props": {
+        "background": "rgb(14, 20, 27)"
+      },
+      "trawled": "2026-11-20",
+      "group": "Game Tile"
+    },
+    {
+      "part": "WRdNzaB6_ActionButtonLegend",
+      "label": "Button hint",
+      "area": "actionbuttonlegenditem",
+      "readable": "actionbuttonlegenditem_ActionButtonLegend",
+      "window": "BigPicture",
+      "selector": ".MbyhbxIetM7FOAmCQSW83",
+      "props": {},
+      "trawled": "2026-11-20",
+      "states": {
+        "highlight": {
+          "selectors": [
+            ".MbyhbxIetM7FOAmCQSW83:hover"
+          ],
+          "defaults": {
+            ".MbyhbxIetM7FOAmCQSW83:hover": {
+              "background": "rgba(255, 255, 255, 0.1)"
+            }
+          },
+          "props": {
+            "background": "rgba(255, 255, 255, 0.1)"
+          }
+        }
+      },
+      "group": "Header & Footer"
+    },
+    {
+      "part": "WRdNzaB6_ActionButtonLegend WRdNzaB6_ActionButtonLabel",
+      "label": "Button hint label",
+      "area": "actionbuttonlegenditem",
+      "readable": "actionbuttonlegenditem_ActionButtonLegend actionbuttonlegenditem_ActionButtonLabel",
+      "window": "BigPicture",
+      "selector": ".MbyhbxIetM7FOAmCQSW83 ._31JnnWnVv7U4VrSuta5yWO",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Header & Footer"
+    },
+    {
+      "part": "V39niyMX_KeyCap",
+      "label": "Key cap",
+      "area": "V39niyMX",
+      "readable": "V39niyMX_KeyCap",
+      "window": "BigPicture",
+      "selector": ".K078lLw-1HGvDqnqRKnzG",
+      "props": {
+        "color": "rgb(35, 38, 46)",
+        "background": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "group": "Indicators"
+    },
+    {
+      "part": "fjbDEq55_BackgroundGlass.fjbDEq55_DrawBackground",
+      "label": "Background glass",
+      "area": "backgroundglass",
+      "page": true,
+      "readable": "backgroundglass_BackgroundGlass backgroundglass_DrawBackground",
+      "window": "BigPicture",
+      "selector": "._3rsrz7BYWjqGBhzcpn-Auo._2NQoFicPv3MZKwGD6pJj-f",
+      "props": {
+        "background": "rgba(0, 0, 0, 0.7)",
+        "backdrop-filter": "blur(8px)"
+      },
+      "trawled": "2026-11-20",
+      "propSelectors": {
+        "backdrop-filter": "._3rsrz7BYWjqGBhzcpn-Auo.N9sQLZ3HK0hCd9vbZif0o"
+      },
+      "notes": "Overlay shown only while a menu or dialog is open over the home screen (opacity 0 otherwise); blurs and tints what is behind it.",
+      "group": "Main Menu"
+    },
+    {
+      "part": "J5rxTYCm_BasicUiRoot.J5rxTYCm_BlackBackground",
+      "label": "Root background",
+      "area": "gamepadui",
+      "page": true,
+      "readable": "gamepadui_BasicUiRoot J5rxTYCm_BlackBackground",
+      "window": "BigPicture",
+      "selector": ".gbo6EORF-ApmV-2TYgZPr._1LWDGJZGtEiAR1kwL94f5Q",
+      "props": {
+        "background": "rgb(0, 0, 0)"
+      },
+      "trawled": "2026-11-20",
+      "group": "Home"
+    },
+    {
+      "part": "GXJzUoT6_SearchAndTitleContainer",
+      "label": "Search bar",
+      "area": "searchbar",
+      "readable": "searchbar_SearchAndTitleContainer",
+      "window": "BigPicture",
+      "selector": "._17M8gvakqjyaw_cLo6ntdl",
+      "props": {
+        "color": "rgb(220, 222, 223)"
+      },
+      "trawled": "2026-11-20",
+      "aliases": [
+        "GXJzUoT6_SearchAndTitleContainer.GXJzUoT6_ShowingSearch",
+        "GXJzUoT6_SearchAndTitleContainer.GXJzUoT6_ShowingSearch.GXJzUoT6_IconMovesOnHover",
+        "GXJzUoT6_SearchAndTitleContainer.GXJzUoT6_ShowingSearch:not(.GXJzUoT6_VR)"
+      ],
+      "states": {
+        "highlight": {
+          "selectors": [
+            "._17M8gvakqjyaw_cLo6ntdl.NMb_F0Q2lf6akyzaZBfLt.gpfocuswithin",
+            "._17M8gvakqjyaw_cLo6ntdl.NMb_F0Q2lf6akyzaZBfLt:focus-within",
+            "._17M8gvakqjyaw_cLo6ntdl.NMb_F0Q2lf6akyzaZBfLt._2YxXntwjdsceSnfMRClWHG:hover",
+            "._17M8gvakqjyaw_cLo6ntdl.NMb_F0Q2lf6akyzaZBfLt:not(._35hhe3ow23zhqPpjIeJczx):hover"
+          ],
+          "defaults": {
+            "._17M8gvakqjyaw_cLo6ntdl.NMb_F0Q2lf6akyzaZBfLt.gpfocuswithin": {
+              "color": "rgb(14, 20, 27)"
+            },
+            "._17M8gvakqjyaw_cLo6ntdl.NMb_F0Q2lf6akyzaZBfLt:focus-within": {
+              "color": "rgb(14, 20, 27)"
+            },
+            "._17M8gvakqjyaw_cLo6ntdl.NMb_F0Q2lf6akyzaZBfLt._2YxXntwjdsceSnfMRClWHG:hover": {
+              "color": "rgb(14, 20, 27)"
+            },
+            "._17M8gvakqjyaw_cLo6ntdl.NMb_F0Q2lf6akyzaZBfLt:not(._35hhe3ow23zhqPpjIeJczx):hover": {
+              "background": "rgba(255, 255, 255, 0.3)"
+            }
+          },
+          "props": {
+            "color": "rgb(14, 20, 27)",
+            "background": "rgba(255, 255, 255, 0.3)"
+          }
+        }
+      },
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Header & Footer"
+    },
+    {
+      "part": "GXJzUoT6_SearchAndTitleContainer GXJzUoT6_SearchIconLeft",
+      "label": "Search icon",
+      "area": "searchbar",
+      "readable": "searchbar_SearchAndTitleContainer searchbar_SearchIconLeft",
+      "window": "BigPicture",
+      "selector": "._17M8gvakqjyaw_cLo6ntdl ._2Ya83QVfgqLema1GlOi9_C",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Header & Footer"
+    },
+    {
+      "part": "GXJzUoT6_SearchAndTitleContainer GXJzUoT6_SearchIconRight",
+      "label": "Search icon, right",
+      "area": "searchbar",
+      "readable": "searchbar_SearchAndTitleContainer searchbar_SearchIconRight",
+      "window": "BigPicture",
+      "selector": "._17M8gvakqjyaw_cLo6ntdl ._1Ka4TMacsEnWHBXCx3gp52",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "aliases": [
+        "GXJzUoT6_SearchAndTitleContainer.GXJzUoT6_ShowingSearch GXJzUoT6_SearchIconRight.GXJzUoT6_WhiteBackground",
+        "GXJzUoT6_SearchAndTitleContainer.GXJzUoT6_ShowingSearch.GXJzUoT6_IconMovesOnHover GXJzUoT6_SearchIconRight.GXJzUoT6_WhiteBackground"
+      ],
+      "group": "Header & Footer"
+    },
+    {
+      "part": "GXJzUoT6_SearchBox",
+      "label": "Search box",
+      "area": "searchbar",
+      "readable": "searchbar_SearchBox",
+      "window": "BigPicture",
+      "selector": "._2a1-sPpExCp24Q8dfImB0a",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "states": {
+        "highlight": {
+          "selectors": [
+            "._2a1-sPpExCp24Q8dfImB0a.gpfocus"
+          ],
+          "defaults": {
+            "._2a1-sPpExCp24Q8dfImB0a.gpfocus": {
+              "color": "rgb(14, 20, 27)"
+            }
+          },
+          "props": {
+            "color": "rgb(14, 20, 27)"
+          }
+        }
+      },
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Header & Footer"
+    },
+    {
+      "part": "BasicUI 263GZqVc_RecentlyCompleted 263GZqVc_Header",
+      "label": "Recently updated heading",
+      "area": "recentlycompleted",
+      "readable": "recentlycompleted_RecentlyCompleted recentlycompleted_Header",
+      "window": "BigPicture",
+      "selector": ".BasicUI ._3fDIRGKWUAQUCORORZWL_f .NhBU2IYSxZT2-iO1G3ntz",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "What's New"
+    },
+    {
+      "part": "263GZqVc_GameIconAndName 263GZqVc_GameName",
+      "label": "Recently updated game name",
+      "area": "recentlycompleted",
+      "readable": "recentlycompleted_GameIconAndName recentlycompleted_GameName",
+      "window": "BigPicture",
+      "selector": "._2RTo4iH5C026PtVTtWrBK3 ._1EIQLhLAPTMft0B_erQdI-",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "What's New"
+    },
+    {
+      "part": "263GZqVc_DownloadInfo",
+      "label": "Recently updated details",
+      "area": "recentlycompleted",
+      "readable": "recentlycompleted_DownloadInfo",
+      "window": "BigPicture",
+      "selector": "._1wLpmwH1g8b3Xra-xAL-iK",
+      "props": {
+        "color": "rgb(139, 146, 154)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 0.66
+        }
+      },
+      "group": "What's New"
+    },
+    {
+      "part": "263GZqVc_DownloadInfo 263GZqVc_Bytes",
+      "label": "Recently updated size",
+      "area": "recentlycompleted",
+      "readable": "recentlycompleted_DownloadInfo recentlycompleted_Bytes",
+      "window": "BigPicture",
+      "selector": "._1wLpmwH1g8b3Xra-xAL-iK .TH3M8HDaCIzFH0ZswR_Lh",
+      "props": {
+        "color": "rgb(220, 222, 223)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "What's New"
+    },
+    {
+      "part": "BasicUI jZ3E2b5l_StoreCarouselCtn jZ3E2b5l_Header",
+      "label": "Store carousel heading",
+      "area": "homestorecarousel",
+      "readable": "homestorecarousel_StoreCarouselCtn homestorecarousel_Header",
+      "window": "BigPicture",
+      "selector": ".BasicUI ._3zVCVKrpcKJT5fd_dbyuwQ .xpRXvu3-lbtUHYWgwJCiJ",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Widgets"
+    },
+    {
+      "part": "Kp4Buf0X_EventType",
+      "label": "News type label",
+      "area": "gamepadhomewhatsnew",
+      "readable": "gamepadhomewhatsnew_EventType",
+      "window": "BigPicture",
+      "selector": "._1CHMXiWOqnIysQxRkfNncU",
+      "props": {
+        "color": "rgb(95, 163, 211)"
+      },
+      "trawled": "2026-11-20",
+      "group": "What's New"
+    },
+    {
+      "part": "Kp4Buf0X_EventType.Kp4Buf0X_EventType28",
+      "label": "News type label, news",
+      "area": "gamepadhomewhatsnew",
+      "readable": "gamepadhomewhatsnew_EventType gamepadhomewhatsnew_EventType28",
+      "window": "BigPicture",
+      "selector": "._1CHMXiWOqnIysQxRkfNncU._3a8OV6RnNIFEP1qrjio_QS",
+      "props": {
+        "color": "rgb(176, 173, 146)"
+      },
+      "trawled": "2026-11-20",
+      "group": "What's New"
+    },
+    {
+      "part": "Kp4Buf0X_EventType.Kp4Buf0X_EventType13",
+      "label": "News type label, update",
+      "area": "gamepadhomewhatsnew",
+      "readable": "gamepadhomewhatsnew_EventType gamepadhomewhatsnew_EventType13",
+      "window": "BigPicture",
+      "selector": "._1CHMXiWOqnIysQxRkfNncU._1PWPAOvQSOcqgBUOK6Qjuf",
+      "props": {
+        "color": "rgb(95, 163, 211)"
+      },
+      "trawled": "2026-11-20",
+      "group": "What's New"
+    },
+    {
+      "part": "Kp4Buf0X_GameIconAndName Kp4Buf0X_GameName",
+      "label": "News tile game name",
+      "area": "gamepadhomewhatsnew",
+      "readable": "gamepadhomewhatsnew_GameIconAndName gamepadhomewhatsnew_GameName",
+      "window": "BigPicture",
+      "selector": "._2hemZcvJgBSV9YvlToW1Zv ._11NNMU7s1rEnvE2bfegIiX",
+      "props": {
+        "color": "rgb(139, 146, 154)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 0.66
+        }
+      },
+      "group": "What's New"
+    },
+    {
+      "part": "QcGXoqZ7_HeaderTopEdge",
+      "label": "Header Line",
+      "area": "gamepadhome",
+      "readable": "QcGXoqZ7_HeaderTopEdge",
+      "window": "BigPicture",
+      "selector": "._3swbmqVeqyt-hmbzZ9D8KY",
+      "props": {
+        "background": "rgb(0, 0, 0)"
+      },
+      "trawled": "2026-11-20",
+      "group": "Header & Footer"
+    },
+    {
+      "part": "E9TkPRCA_LibraryItemIcons > E9TkPRCA_ControllerSupportIcon",
+      "label": "Game tile controller icon",
+      "area": "appportrait",
+      "readable": "appportrait_LibraryItemIcons appportrait_ControllerSupportIcon",
+      "window": "BigPicture",
+      "selector": "._3BPFqWN5T-x8njyrRYM1CX > ._1TaKfLOhWBYEPtvv-WJv0n",
+      "props": {
+        "background": "rgb(14, 20, 27)"
+      },
+      "trawled": "2026-11-20",
+      "group": "Game Tile"
+    },
+    {
+      "part": "E9TkPRCA_NumberOfCopies",
+      "label": "Game tile copies badge",
+      "area": "appportrait",
+      "readable": "E9TkPRCA_NumberOfCopies",
+      "window": "BigPicture",
+      "selector": "._3zxPLsbnU5LuorR0_EPCEC",
+      "props": {
+        "background": "rgba(0, 0, 0, 0.3)"
+      },
+      "trawled": "2026-11-20",
+      "group": "Game Tile"
+    },
+    {
+      "part": "ehWSiALG_Clock:not(.ehWSiALG_DashboardBar)",
+      "label": "Header clock",
+      "area": "header",
+      "readable": "header_Clock header_DashboardBar",
+      "window": "BigPicture",
+      "selector": "._1HhLUvHH6BZLIOyOE80TVh:not(._2IsmzUdOq5mgVorXJRqLSo)",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Header & Footer"
+    },
+    {
+      "part": "BasicUI ehWSiALG_Header",
+      "label": "Header",
+      "area": "header",
+      "readable": "header_Header",
+      "window": "BigPicture",
+      "selector": ".BasicUI ._1E_SL1bTibeQ3PQRBZoS_-",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Header & Footer"
+    },
+    {
+      "part": "ehWSiALG_HeaderItem.ehWSiALG_Clickable",
+      "label": "Header status",
+      "area": "header",
+      "readable": "header_HeaderItem header_Clickable",
+      "window": "BigPicture",
+      "selector": "._2HnVd7wV6yVaTiXfrBe3gq._8sPcK-HDVUh0QbFshamLa",
+      "props": {},
+      "trawled": "2026-11-20",
+      "states": {
+        "highlight": {
+          "selectors": [
+            "._2HnVd7wV6yVaTiXfrBe3gq._8sPcK-HDVUh0QbFshamLa:hover",
+            "._2HnVd7wV6yVaTiXfrBe3gq.gpfocus",
+            "._2HnVd7wV6yVaTiXfrBe3gq.gpfocuswithin"
+          ],
+          "defaults": {
+            "._2HnVd7wV6yVaTiXfrBe3gq._8sPcK-HDVUh0QbFshamLa:hover": {
+              "background": "rgba(255, 255, 255, 0.3)"
+            },
+            "._2HnVd7wV6yVaTiXfrBe3gq.gpfocus": {
+              "background": "rgb(255, 255, 255)"
+            },
+            "._2HnVd7wV6yVaTiXfrBe3gq.gpfocuswithin": {
+              "background": "rgb(255, 255, 255)"
+            }
+          },
+          "props": {
+            "background": "rgba(255, 255, 255, 0.3)"
+          }
+        }
+      },
+      "group": "Header & Footer"
+    },
+    {
+      "part": "ehWSiALG_HeaderItem.ehWSiALG_BatteryIcon ehWSiALG_Percentage",
+      "label": "Header battery %",
+      "area": "header",
+      "readable": "header_HeaderItem header_BatteryIcon header_Percentage",
+      "window": "BigPicture",
+      "selector": "._2HnVd7wV6yVaTiXfrBe3gq._1_6kL0vUt78Sy-ZAp63E3e ._1_RjAV6u2_phEo1AYYdDo4",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Header & Footer"
+    },
+    {
+      "part": "gFV3re5o_FriendsPlayingNowBadge",
+      "label": "Friends tab badge",
+      "area": "appdetailsfriendssection",
+      "readable": "appdetailsfriendssection_FriendsPlayingNowBadge",
+      "window": "BigPicture",
+      "selector": "._38sNQt6oEVaeO9D-gI_Lhl",
+      "props": {
+        "color": "rgb(220, 222, 223)",
+        "background": "rgb(35, 108, 57)"
+      },
+      "trawled": "2026-11-20",
+      "aliases": [
+        "gFV3re5o_FriendsPlayingNowBadge.gFV3re5o_InFriendsTab"
+      ],
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Indicators"
+    },
+    {
+      "part": "8JybvNJN_Light 8JybvNJN_Background",
+      "label": "Bottom bar icon background",
+      "readable": "footericons_Light footericons_Background",
+      "window": "BigPicture",
+      "selector": "._1LgIo8fAGnrgqGzZ7rU_9D .yjs9mmsKYDARPUPSoBFw3",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "area": "footericons",
+      "group": "Header & Footer"
+    },
+    {
+      "part": "8JybvNJN_Light 8JybvNJN_Foreground",
+      "label": "Bottom bar icon foreground",
+      "readable": "footericons_Light footericons_Foreground",
+      "window": "BigPicture",
+      "selector": "._1LgIo8fAGnrgqGzZ7rU_9D .JgT6ZW65muFgrXnrRrXyD",
+      "props": {
+        "color": "rgb(14, 20, 27)"
+      },
+      "trawled": "2026-11-20",
+      "area": "footericons",
+      "group": "Header & Footer"
+    },
+    {
+      "part": "C1nS6cpP_Play C1nS6cpP_ActionIcon",
+      "label": "Game tile play icon",
+      "readable": "basicgamecarousel_Play basicgamecarousel_ActionIcon",
+      "window": "BigPicture",
+      "selector": "._12eKcQAZM2bwKDDQhiBCPr ._25QboeMYEk12Wt3i35P_EG",
+      "props": {
+        "color": "rgb(89, 191, 64)"
+      },
+      "trawled": "2026-11-20",
+      "area": "basicgamecarousel",
+      "group": "Game Tile"
+    },
+    {
+      "part": "C1nS6cpP_SubMessage",
+      "label": "Game tile status line",
+      "readable": "basicgamecarousel_SubMessage",
+      "window": "BigPicture",
+      "selector": "._1BtXgm_u14cFdsGMjTpY59",
+      "props": {
+        "color": "rgba(255, 255, 255, 0.5)"
+      },
+      "trawled": "2026-11-20",
+      "area": "basicgamecarousel",
+      "group": "Game Tile"
+    },
+    {
+      "part": "tjjBDocm_RecentGamesHeaderLabel",
+      "label": "Recent games heading",
+      "readable": "gamepadhomerecentgames_RecentGamesHeaderLabel",
+      "window": "BigPicture",
+      "selector": "._1KKWf5v5FhqL_NrtrGZPzG",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "area": "gamepadhomerecentgames",
+      "group": "Game Tile"
+    },
+    {
+      "part": "LLGUZIsx_GameCapsule",
+      "label": "Capsule Outline",
+      "readable": "gamecapsule_GameCapsule",
+      "window": "BigPicture",
+      "selector": ".fXdhjvKWFQqnjxUzju3jk",
+      "props": {
+        "background": "rgb(35, 38, 46)"
+      },
+      "trawled": "2026-11-20",
+      "area": "gamecapsule",
+      "group": "Game Tile"
+    },
+    {
+      "part": "E9TkPRCA_AppPortraitBanner",
+      "label": "New To Library",
+      "readable": "appportrait_AppPortraitBanner",
+      "window": "BigPicture",
+      "selector": ".N8aJrSpxQ6II4CY_aFdYI",
+      "props": {
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(26, 159, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "area": "appportrait",
+      "group": "Game Tile"
+    },
+    {
+      "part": "E9TkPRCA_PortraitMessage.E9TkPRCA_SubMessage",
+      "label": "Game tile status line, inner",
+      "readable": "appportrait_PortraitMessage appportrait_SubMessage",
+      "window": "BigPicture",
+      "selector": "._3gwMkKp82bb5aZj4EeQnpi._3DR9f2B3JQKviESgdrHp1u",
+      "props": {
+        "color": "rgba(255, 255, 255, 0.7)"
+      },
+      "trawled": "2026-11-20",
+      "aliases": [
+        "BasicUI E9TkPRCA_PortraitMessage E9TkPRCA_SubMessage"
+      ],
+      "area": "appportrait",
+      "group": "Game Tile"
+    },
+    {
+      "part": "BasicUI E9TkPRCA_PortraitMessage E9TkPRCA_Message",
+      "label": "Game tile title line",
+      "readable": "appportrait_PortraitMessage appportrait_Message",
+      "window": "BigPicture",
+      "selector": ".BasicUI ._3gwMkKp82bb5aZj4EeQnpi ._3CRLA2FFclTRCznNBgtiIH",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "area": "appportrait",
+      "group": "Game Tile"
+    },
+    {
+      "part": "ehWSiALG_Header::before",
+      "label": "Header And Bottom Bar",
+      "readable": "header_Header",
+      "area": "header",
+      "window": "BigPicture",
+      "selector": "._1E_SL1bTibeQ3PQRBZoS_-::before, ._3T1iFy2maYycwqgFuzERyf",
+      "props": {
+        "background": "rgba(0, 0, 0, 0.5)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "ehWSiALG_Header.ehWSiALG_OverrideHeaderBackground::before",
+        "3AYJPRJR_BasicFooter"
+      ],
+      "states": {
+        "highlight": {
+          "selectors": [
+            "._1E_SL1bTibeQ3PQRBZoS_-.MS2nBlIVdD81RAR7q2avW.gpfocuswithin::before"
+          ],
+          "defaults": {
+            "._1E_SL1bTibeQ3PQRBZoS_-.MS2nBlIVdD81RAR7q2avW.gpfocuswithin::before": {
+              "background": "rgba(0, 0, 0, 0.5)"
+            }
+          },
+          "props": {
+            "background": "rgba(0, 0, 0, 0.5)"
+          }
+        }
+      },
+      "notes": "Merged with the Bottom bar (3AYJPRJR_BasicFooter, user 2026-11-21). The header band is a ::before, so its pseudo is in the selector. Focus is the header only: Steam has no focus colour for the bottom bar. On store pages Steam makes the header (HeaderOpaque) and bar (Opaque) solid black; `underlay` paints the Home screen colour there, under the band / under the bar colour, so they look as on home (user 2026-11-21).",
+      "group": "Header & Footer",
+      "underlay": {
+        "prop": "background",
+        "from": "J5rxTYCm_BasicHome",
+        "plain": [
+          "._1E_SL1bTibeQ3PQRBZoS_-._3x-XEqWonUA-lbEznRNgk2"
+        ],
+        "layered": [
+          "._3T1iFy2maYycwqgFuzERyf._2PZqiulqsNwAphWn25K5uZ"
+        ]
+      }
+    },
+    {
+      "part": "awNNWnmm_GamepadTabbedPage.awNNWnmm_IsUnderHeader awNNWnmm_TabHeaderRowWrapper::before",
+      "label": "Header",
+      "readable": "gamepadtabbedpage_GamepadTabbedPage gamepadtabbedpage_IsUnderHeader gamepadtabbedpage_TabHeaderRowWrapper",
+      "area": "gamepadtabbedpage",
+      "window": "BigPicture",
+      "selector": "._3IBLc81yyL08OJ7rfKtF00._31ZleDJpmmVr6YwR5VLHiu ._2JobstxtZVYF3078DblN2M, ._2JobstxtZVYF3078DblN2M._1jNhbFODJy7sNdcnEeZkz4",
+      "props": {
+        "background": "rgba(0, 0, 0, 0.5)"
+      },
+      "trawled": "2026-11-21",
+      "pseudo": "::before",
+      "group": "Tabs",
+      "aliases": [
+        "awNNWnmm_TabHeaderRowWrapper.awNNWnmm_ScrolledDown::before"
+      ],
+      "notes": "The band behind the header and tabs. Merged with the scrolled-down band (awNNWnmm_TabHeaderRowWrapper.awNNWnmm_ScrolledDown::before, user 2026-11-21)."
+    },
+    {
+      "part": "GXJzUoT6_SearchFieldBackground.GXJzUoT6_WhiteBackground",
+      "label": "search field background, white background",
+      "readable": "searchbar_SearchFieldBackground searchbar_WhiteBackground",
+      "area": "searchbar",
+      "window": "BigPicture",
+      "selector": "._3F4YRi5x8CjExTV0rOdSL-._1l8jsSJRozEnzlhm5Q2m7U",
+      "props": {
+        "background": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-21",
+      "group": "Header & Footer"
+    },
+    {
+      "part": "GamepadMode offline Q3SodnYB_avatarStatus",
+      "label": "gamepad mode, offline, avatar status",
+      "readable": "steamavatar_avatarStatus",
+      "area": "steamavatar",
+      "window": "BigPicture",
+      "selector": ".GamepadMode .offline ._3xUpb5DWXPFNcHHIcv-9pe",
+      "props": {
+        "background": "rgb(103, 112, 123)"
+      },
+      "trawled": "2026-11-21",
+      "group": "Indicators"
+    },
+    {
+      "part": "b5AGtz9j_AppActivityDay b5AGtz9j_AppActivityDate b5AGtz9j_Rule",
+      "label": "app activity day, app activity date, rule",
+      "readable": "appactivityday_AppActivityDay appactivityday_AppActivityDate appactivityday_Rule",
+      "area": "appactivityday",
+      "window": "BigPicture",
+      "selector": ".S2Fu9HxHCA5MaCLGrN2ib ._19LfMT7PFWg2xHOqNjR99q ._3pcPRPvuGH7hEM33zLknZO",
+      "props": {
+        "background": "linear-gradient(to left, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.03))"
+      },
+      "trawled": "2026-11-21",
+      "group": "Activity"
+    },
+    {
+      "part": "7Vn4DG64_FavoriteFriend",
+      "label": "Favourite Friends",
+      "readable": "gamepadhomefriends_FavoriteFriend",
+      "area": "gamepadhomefriends",
+      "window": "BigPicture",
+      "selector": "._3SLpz33ty60g8fHC45oizM, .MVc_6PBifixTWvYe6d-sS, ._1GCZAht_W2I3Elndk5cU0-:hover, .KLo2nZeTMZykCUGVlKsab",
+      "props": {
+        "background": "rgba(172, 178, 201, 0.14)"
+      },
+      "trawled": "2026-11-21",
+      "group": "Friends",
+      "fused": [
+        "highlight"
+      ],
+      "aliases": [
+        "7Vn4DG64_GoToFriends",
+        "gFV3re5o_AvatarAndLabel",
+        "7Vn4DG64_InGameGame"
+      ],
+      "notes": "One colour for the Friends tab (user, 2026-11-21): favourite friend tiles and View Friends List (7Vn4DG64_GoToFriends), focus included, plus a friend's avatar and name on hover (gFV3re5o_AvatarAndLabel, whose only colour is its hover, so its :hover selector sits in the base list). Steam's own values: tiles and button rgba(172, 178, 201, 0.14), avatar hover rgba(103, 137, 161, 0.2). Also the friends-playing game cards (7Vn4DG64_InGameGame), focus fused; Steam: rgba(172, 178, 201, 0.14)."
+    },
+    {
+      "part": "GamepadMode 4ZxDBJu4_playerName",
+      "label": "gamepad mode, player name \u2014 \u201cFriend Name\u201d",
+      "readable": "personanameandstatus_playerName",
+      "area": "personanameandstatus",
+      "window": "BigPicture",
+      "selector": ".GamepadMode .nOdcT-MoOaXGePXLyPe0H",
+      "props": {
+        "color": "rgb(179, 223, 255)"
+      },
+      "trawled": "2026-11-21",
+      "group": "Friends"
+    },
+    {
+      "part": "7Vn4DG64_InGameGame 7Vn4DG64_FriendsPlaying",
+      "label": "in game game, friends playing \u2014 \u201c2 Friends Playing\u201d",
+      "readable": "gamepadhomefriends_InGameGame gamepadhomefriends_FriendsPlaying",
+      "area": "gamepadhomefriends",
+      "window": "BigPicture",
+      "selector": ".KLo2nZeTMZykCUGVlKsab ._15rrZcW27Qo2PQ_U9T9gQG",
+      "props": {
+        "color": "rgb(89, 191, 64)"
+      },
+      "trawled": "2026-11-21",
+      "group": "Friends"
+    },
+    {
+      "part": "7Vn4DG64_InGameGame 7Vn4DG64_InLibrary",
+      "label": "in game game, in library \u2014 \u201cIn library\u201d",
+      "readable": "gamepadhomefriends_InGameGame gamepadhomefriends_InLibrary",
+      "area": "gamepadhomefriends",
+      "window": "BigPicture",
+      "selector": ".KLo2nZeTMZykCUGVlKsab .ho5QoRrgV_CBMhtyuWHG6",
+      "props": {
+        "color": "rgb(139, 146, 154)"
+      },
+      "trawled": "2026-11-21",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 0.66
+        }
+      },
+      "group": "Friends"
+    },
+    {
+      "part": "7Vn4DG64_InGameGame 7Vn4DG64_Title",
+      "label": "in game game, title \u2014 \u201cDeadlock\u201d",
+      "readable": "gamepadhomefriends_InGameGame gamepadhomefriends_Title",
+      "area": "gamepadhomefriends",
+      "window": "BigPicture",
+      "selector": ".KLo2nZeTMZykCUGVlKsab .EZ-F-qwveg8WDiTu38_DQ",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-21",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Friends"
+    },
+    {
+      "part": "ingame 4ZxDBJu4_playerName",
+      "label": "ingame, player name \u2014 \u201cFriend Name\u201d",
+      "readable": "personanameandstatus_playerName",
+      "area": "personanameandstatus",
+      "window": "BigPicture",
+      "selector": ".ingame .nOdcT-MoOaXGePXLyPe0H",
+      "props": {
+        "color": "rgb(89, 191, 64)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "GamepadMode ingame 4ZxDBJu4_playerName",
+        "GamepadMode awayOrSnooze 4ZxDBJu4_playerName"
+      ],
+      "group": "Friends"
+    },
+    {
+      "part": "offline 4ZxDBJu4_playerName",
+      "label": "offline, player name \u2014 \u201cFriend Name\u201d",
+      "readable": "personanameandstatus_playerName",
+      "area": "personanameandstatus",
+      "window": "BigPicture",
+      "selector": ".offline .nOdcT-MoOaXGePXLyPe0H",
+      "props": {
+        "color": "rgb(184, 188, 191)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "GamepadMode offline 4ZxDBJu4_playerName"
+      ],
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 0.85
+        }
+      },
+      "group": "Friends"
+    },
+    {
+      "part": "offline 4ZxDBJu4_richPresenceLabel",
+      "label": "offline, rich presence label \u2014 \u201cLast online 12 hours ago\u201d",
+      "readable": "personanameandstatus_richPresenceLabel",
+      "area": "personanameandstatus",
+      "window": "BigPicture",
+      "selector": ".offline ._2Ri005Wg_uXDTa71kdRbcN",
+      "props": {
+        "color": "rgb(110, 110, 110)"
+      },
+      "trawled": "2026-11-21",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 0.5
+        }
+      },
+      "group": "Friends"
+    },
+    {
+      "part": "online 4ZxDBJu4_playerName",
+      "label": "online, player name \u2014 \u201cFriend Name\u201d",
+      "readable": "personanameandstatus_playerName",
+      "area": "personanameandstatus",
+      "window": "BigPicture",
+      "selector": ".online .nOdcT-MoOaXGePXLyPe0H",
+      "props": {
+        "color": "rgb(179, 223, 255)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "GamepadMode online 4ZxDBJu4_playerName"
+      ],
+      "group": "Friends"
+    },
+    {
+      "part": "online 4ZxDBJu4_richPresenceLabel",
+      "label": "online, rich presence label \u2014 \u201cOnline\u201d",
+      "readable": "personanameandstatus_richPresenceLabel",
+      "area": "personanameandstatus",
+      "window": "BigPicture",
+      "selector": ".online ._2Ri005Wg_uXDTa71kdRbcN",
+      "props": {
+        "color": "rgb(76, 180, 255)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "GamepadMode online 4ZxDBJu4_richPresenceLabel"
+      ],
+      "group": "Friends"
+    },
+    {
+      "part": "4ZxDBJu4_playerNicknameBracket",
+      "label": "player nickname bracket \u2014 \u201c*\u201d",
+      "readable": "personanameandstatus_playerNicknameBracket",
+      "area": "personanameandstatus",
+      "window": "BigPicture",
+      "selector": "._3XEmWmfQy7gbYJ4KJ1N9tp",
+      "props": {
+        "color": "rgb(153, 153, 153)"
+      },
+      "trawled": "2026-11-21",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 0.69
+        }
+      },
+      "group": "Friends"
+    },
+    {
+      "part": "C1nS6cpP_BasicGameCarouselItem C1nS6cpP_TextBoxCarouselContents",
+      "label": "basic game carousel item, text box carousel contents \u2014 \u201cView more in your Library\u201d",
+      "readable": "basicgamecarousel_BasicGameCarouselItem basicgamecarousel_TextBoxCarouselContents",
+      "area": "basicgamecarousel",
+      "window": "BigPicture",
+      "selector": "._3YYQ98HSj-wh5uljwl12bW ._3bvCHoWj4rDdZr3mnKlXaf",
+      "props": {
+        "background": "linear-gradient(313deg, rgba(51, 51, 51, 0.667), rgba(85, 85, 85, 0.667))"
+      },
+      "trawled": "2026-11-21",
+      "group": "Game Tile"
+    },
+    {
+      "part": "T9b8HuYr_PersonalCalendarWidget T9b8HuYr_PersonalCalendarWidgetDay",
+      "label": "personal calendar widget, personal calendar widget day",
+      "readable": "T9b8HuYr_PersonalCalendarWidget T9b8HuYr_PersonalCalendarWidgetDay",
+      "area": "T9b8HuYr",
+      "window": "BigPicture",
+      "selector": "._326_uhqq2I-hJwNRSqIZK4 .tqaXEuWN2wV5_8lmSkMng",
+      "props": {
+        "background": "linear-gradient(0deg, rgba(31, 49, 74, 0.45) 5%, rgba(33, 54, 77, 0.65) 20%, rgba(28, 50, 70, 0.5) 65%, rgba(40, 70, 98, 0.45) 95%, rgba(43, 83, 118, 0.55) 100%), radial-gradient(circle at 10% 0%, rgba(94, 174, 255, 0.2) 0%, rgba(34, 53, 77, 0.05) 50%, rgba(94, 174, 255, 0) 90%), radial-gradient(circle at 80% 100%, rgba(94, 174, 255, 0.1) 0%, rgba(94, 174, 255, 0.05) 50%, rgba(0, 97, 196, 0.6) 90%)"
+      },
+      "trawled": "2026-11-21",
+      "group": "Widgets"
+    },
+    {
+      "part": "V4hIzfTZ_DiscoveryQueueWidgetCtn",
+      "label": "App Carousel",
+      "readable": "V4hIzfTZ_DiscoveryQueueWidgetCtn",
+      "area": "V4hIzfTZ",
+      "window": "BigPicture",
+      "selector": "._3PAP1PfUymQrLEveRsxQxP, ._2-tz2hqtOXPPtMnVPHNSdx, ._1DaxYFphX9KPH-YWeuNTvO",
+      "props": {
+        "background": "rgb(56, 100, 131)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "uL3vOzrd_WidgetHeaderCtn",
+        "V4hIzfTZ_AppCarouselPosition"
+      ],
+      "notes": "Merged with its header (uL3vOzrd_WidgetHeaderCtn, \u201cExplore Your Discovery Queue\u201d, user 2026-11-21; Steam: a purple-to-blue gradient there, solid rgb(56, 100, 131) on the widget). Also merged: V4hIzfTZ_AppCarouselPosition (same Steam colour), renamed App Carousel (user 2026-11-21).",
+      "group": "Widgets"
+    },
+    {
+      "part": "uL3vOzrd_WidgetHeaderSubText",
+      "label": "widget header sub text \u2014 \u201cClick to open your queue of top-selling,\u201d",
+      "readable": "uL3vOzrd_WidgetHeaderSubText",
+      "area": "discoveryqueuewidget",
+      "window": "BigPicture",
+      "selector": ".O2jA-VCFl9bmblncfI4k2",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-21",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Widgets"
+    },
+    {
+      "part": "uL3vOzrd_WidgetHeaderText",
+      "label": "widget header text \u2014 \u201cExplore Your Discovery Queue\u201d",
+      "readable": "discoveryqueuewidget_WidgetHeaderText",
+      "area": "discoveryqueuewidget",
+      "window": "BigPicture",
+      "selector": "._1mKVZY4-l46AZiZvctCEmx",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-21",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Widgets"
+    },
+    {
+      "part": "7fWhymK6_ActivityCommentThread",
+      "label": "activity comment thread",
+      "readable": "comment_thread_ActivityCommentThread",
+      "area": "comment",
+      "window": "BigPicture",
+      "selector": "._39nnaT_CLE0m_WXVIrAwaG",
+      "props": {
+        "background": "rgba(36, 40, 47, 0.8)"
+      },
+      "trawled": "2026-11-21",
+      "group": "Activity"
+    },
+    {
+      "part": "7fWhymK6_RatingBar 7fWhymK6_LikeButton.7fWhymK6_CanClick",
+      "label": "Activity Buttons",
+      "readable": "comment_thread_RatingBar comment_thread_LikeButton comment_thread_CanClick",
+      "area": "comment",
+      "window": "BigPicture",
+      "selector": "._1yWgPveQ73QeYCdLcs6oFQ ._161IKq84RwQO4abJSCqv7q._3Mds9UG-5yRsWUclIV_Y9q, ._1yWgPveQ73QeYCdLcs6oFQ ._3i62HEXIhsNTd5-Z4uL3K._3Mds9UG-5yRsWUclIV_Y9q",
+      "props": {
+        "fill": "rgb(112, 112, 112)"
+      },
+      "trawled": "2026-11-21",
+      "states": {
+        "highlight": {
+          "selectors": [
+            "._1yWgPveQ73QeYCdLcs6oFQ ._161IKq84RwQO4abJSCqv7q._3Mds9UG-5yRsWUclIV_Y9q:hover",
+            "._1yWgPveQ73QeYCdLcs6oFQ ._3i62HEXIhsNTd5-Z4uL3K._3Mds9UG-5yRsWUclIV_Y9q:hover"
+          ],
+          "defaults": {
+            "._1yWgPveQ73QeYCdLcs6oFQ ._161IKq84RwQO4abJSCqv7q._3Mds9UG-5yRsWUclIV_Y9q:hover": {
+              "background": "rgb(50, 57, 65)"
+            },
+            "._1yWgPveQ73QeYCdLcs6oFQ ._3i62HEXIhsNTd5-Z4uL3K._3Mds9UG-5yRsWUclIV_Y9q:hover": {
+              "background": "rgb(50, 57, 65)"
+            }
+          },
+          "props": {
+            "background": "rgb(50, 57, 65)"
+          }
+        }
+      },
+      "aliases": [
+        "7fWhymK6_RatingBar 7fWhymK6_CommentButton.7fWhymK6_CanClick",
+        "7fWhymK6_RatingBar 7fWhymK6_LikeIcon svg",
+        "BasicUI 7fWhymK6_RatingBar 7fWhymK6_LikeIcon svg",
+        "7fWhymK6_RatingBar 7fWhymK6_LikeIcon path",
+        "7fWhymK6_RatingBar 7fWhymK6_CommentIcon path"
+      ],
+      "notes": "The like and comment buttons under activity posts (7fWhymK6_RatingBar, hidden until the post is hovered; user 2026-11-21). Merged with the comment button (7fWhymK6_CommentButton.7fWhymK6_CanClick). Also the like and comment icons (svg / path fill; Steam sets fill in CSS, so their color does nothing and is dropped).",
+      "propSelectors": {
+        "fill": "._1yWgPveQ73QeYCdLcs6oFQ ._1OhPtd0sU2yzZwckCTGRNC svg, ._1yWgPveQ73QeYCdLcs6oFQ ._1OhPtd0sU2yzZwckCTGRNC path, ._1yWgPveQ73QeYCdLcs6oFQ ._1R6Oubrk1mRaGQf56EQwd4 path"
+      },
+      "dropped": [
+        "color"
+      ],
+      "group": "Activity"
+    },
+    {
+      "part": "gZW9SP73_Icon::after",
+      "label": "icon, after",
+      "readable": "achievementiconbase_Icon",
+      "area": "achievementiconbase",
+      "window": "BigPicture",
+      "selector": "._2V2sHETNfa62yMoDwSF3_t",
+      "props": {
+        "background": "linear-gradient(to right, rgb(59, 65, 74) 0%, rgb(44, 49, 56) 95%)"
+      },
+      "trawled": "2026-11-21",
+      "pseudo": "::after",
+      "group": "Activity"
+    },
+    {
+      "part": "LLGUZIsx_GameCapsule LLGUZIsx_BottomBar",
+      "label": "game capsule, bottom bar",
+      "readable": "gamecapsule_GameCapsule gamecapsule_BottomBar",
+      "area": "gamecapsule",
+      "window": "BigPicture",
+      "selector": ".fXdhjvKWFQqnjxUzju3jk ._3-GyQfKnKaWozIRLOw4BjY",
+      "props": {
+        "background": "rgb(60, 93, 132)"
+      },
+      "trawled": "2026-11-21",
+      "group": "Game Tile"
+    },
+    {
+      "part": "LLGUZIsx_InLibrary",
+      "label": "in library \u2014 \u201cIn library\u201d",
+      "readable": "gamecapsule_InLibrary",
+      "area": "gamecapsule",
+      "window": "BigPicture",
+      "selector": ".fyHnacqM-lF0eryq8p9s9",
+      "props": {
+        "background": "rgb(79, 149, 189)"
+      },
+      "trawled": "2026-11-21",
+      "group": "Game Tile"
+    },
+    {
+      "part": "owwS4zpa_StoreSalePriceWidgetContainer owwS4zpa_StoreSaleNewItem",
+      "label": "store sale price widget container, store sale new item \u2014 \u201cNew\u201d",
+      "readable": "salepreviewwidgets_StoreSalePriceWidgetContainer owwS4zpa_StoreSaleNewItem",
+      "area": "salepreviewwidgets",
+      "window": "BigPicture",
+      "selector": "._1so1AGD_m_uIBFDEc1ImOu .kT9bBl6aBZQ-0xiRlMWzc",
+      "props": {
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(58, 155, 237)"
+      },
+      "trawled": "2026-11-21",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Widgets"
+    },
+    {
+      "part": "LLGUZIsx_PriceCtn",
+      "label": "price ctn \u2014 \u201cNEW\u201d",
+      "readable": "gamecapsule_PriceCtn",
+      "area": "gamecapsule",
+      "window": "BigPicture",
+      "selector": "._2E-mSsWtptcnk088TudSSj",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-21",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Game Tile"
+    },
+    {
+      "part": "owwS4zpa_Discounted owwS4zpa_StoreSalePriceBox",
+      "label": "discounted, store sale price box \u2014 \u201cA$ 47.47\u201d",
+      "readable": "salepreviewwidgets_Discounted salepreviewwidgets_StoreSalePriceBox",
+      "area": "salepreviewwidgets",
+      "window": "BigPicture",
+      "selector": ".w775QgXXCtmtG8yzEp-2u .kauOU9QnW8Fs0QpxzTBph",
+      "props": {
+        "color": "rgb(255, 255, 255)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "BasicUI owwS4zpa_StoreSaleDiscountedPriceCtn owwS4zpa_StoreSalePriceBox"
+      ],
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Widgets"
+    },
+    {
+      "part": "owwS4zpa_StoreOriginalPrice",
+      "label": "store original price \u2014 \u201cA$ 94.95\u201d",
+      "readable": "salepreviewwidgets_StoreOriginalPrice",
+      "area": "salepreviewwidgets",
+      "window": "BigPicture",
+      "selector": "._1odBXcjq8-Q8SFXViJa7c6",
+      "props": {
+        "color": "rgb(204, 216, 227)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "BasicUI owwS4zpa_StoreOriginalPrice"
+      ],
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 0.97
+        }
+      },
+      "group": "Widgets"
+    },
+    {
+      "part": "owwS4zpa_StoreSaleDiscountBox",
+      "label": "store sale discount box \u2014 \u201c-50%\u201d",
+      "readable": "salepreviewwidgets_StoreSaleDiscountBox",
+      "area": "salepreviewwidgets",
+      "window": "BigPicture",
+      "selector": "._1kSDZm0Cg9anUkTfWFtwdN",
+      "props": {
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(91, 163, 43)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "BasicUI owwS4zpa_StoreSaleDiscountBox"
+      ],
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      },
+      "group": "Widgets"
+    },
+    {
+      "part": "LlewZgR3_URLBar::after",
+      "label": "urlbar, after",
+      "readable": "mainbrowser_URLBar",
+      "area": "mainbrowser",
+      "window": "BigPicture",
+      "selector": "._1CwIxtn7jzsKgebTf7Vep9",
+      "props": {
+        "background": "rgb(35, 38, 46)"
+      },
+      "trawled": "2026-11-21",
+      "pseudo": "::after",
+      "group": "Other"
+    }
+  ],
+  "removed": [
+    {
+      "part": "awNNWnmm_GamepadTabbedPage",
+      "ec": "ec1",
+      "label": "lower home panel",
+      "window": "BigPicture",
+      "selector": "._3IBLc81yyL08OJ7rfKtF00",
+      "props": {
+        "background": "rgba(0, 0, 0, 0)"
+      }
+    },
+    {
+      "part": "WRdNzaB6_ActionButtonLegend WRdNzaB6_ActionButtonGlyph",
+      "label": "action button legend, action button glyph \u2014 \u201cF1\u201d",
+      "readable": "actionbuttonlegenditem_ActionButtonLegend actionbuttonlegenditem_ActionButtonGlyph",
+      "window": "BigPicture",
+      "selector": ".MbyhbxIetM7FOAmCQSW83 ._3Jfd85nK4bKoNf_gCSTX6U",
+      "props": {
+        "color": "rgb(14, 20, 27)"
+      },
+      "trawled": "2026-11-20"
+    },
+    {
+      "part": "ehWSiALG_HeaderItem",
+      "label": "Header status",
+      "area": "header",
+      "readable": "header_HeaderItem",
+      "window": "BigPicture",
+      "selector": "._2HnVd7wV6yVaTiXfrBe3gq",
+      "props": {},
+      "trawled": "2026-11-20",
+      "states": {
+        "highlight": {
+          "selectors": [
+            "._2HnVd7wV6yVaTiXfrBe3gq.gpfocus",
+            "._2HnVd7wV6yVaTiXfrBe3gq.gpfocuswithin"
+          ],
+          "defaults": {
+            "._2HnVd7wV6yVaTiXfrBe3gq.gpfocus": {
+              "background": "rgb(255, 255, 255)"
+            },
+            "._2HnVd7wV6yVaTiXfrBe3gq.gpfocuswithin": {
+              "background": "rgb(255, 255, 255)"
+            }
+          },
+          "props": {
+            "background": "rgb(255, 255, 255)"
+          }
+        }
+      },
+      "mergedInto": "ehWSiALG_HeaderItem.ehWSiALG_Clickable",
+      "note": "Focus state merged into the hover part: one edit covers hover and controller focus (user, 2026-11-21)."
+    },
+    {
+      "part": "Kp4Buf0X_Darkener",
+      "label": "News tile shade",
+      "area": "gamepadhomewhatsnew",
+      "readable": "gamepadhomewhatsnew_Darkener",
+      "window": "BigPicture",
+      "selector": "._39dnQ8IrGR0HrxkuazLJEn",
+      "props": {
+        "background": "rgb(0, 86, 214)"
+      },
+      "trawled": "2026-11-20"
+    },
+    {
+      "part": "2oLJdOA4_DemoBanner",
+      "label": "Demo banner",
+      "area": "appdetailsheader",
+      "readable": "appdetailsheader_DemoBanner",
+      "window": "BigPicture",
+      "selector": "._3EXklzsbt_QeypOM4_vp1K",
+      "props": {
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(139, 186, 82)"
+      },
+      "trawled": "2026-11-20",
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 1
+        }
+      }
+    },
+    {
+      "part": "7fWhymK6_RatingBar 7fWhymK6_CommentIcon svg",
+      "label": "rating bar, comment icon, svg",
+      "readable": "comment_thread_RatingBar comment_thread_CommentIcon",
+      "area": "comment",
+      "window": "BigPicture",
+      "selector": "._1yWgPveQ73QeYCdLcs6oFQ ._1R6Oubrk1mRaGQf56EQwd4 svg",
+      "props": {
+        "color": "rgb(112, 112, 112)",
+        "fill": "rgb(112, 112, 112)"
+      },
+      "trawled": "2026-11-21",
+      "aliases": [
+        "BasicUI 7fWhymK6_RatingBar 7fWhymK6_CommentIcon svg",
+        "7fWhymK6_RatingBar 7fWhymK6_CommentIcon 7fWhymK6_RatingIcon",
+        "BasicUI 7fWhymK6_RatingBar 7fWhymK6_CommentIcon 7fWhymK6_RatingIcon",
+        "7fWhymK6_RatingBar 7fWhymK6_CommentButton.7fWhymK6_CanClick 7fWhymK6_RatingIcon",
+        "BasicUI 7fWhymK6_RatingBar 7fWhymK6_CommentButton.7fWhymK6_CanClick 7fWhymK6_RatingIcon"
+      ],
+      "states": {
+        "highlight": {
+          "selectors": [
+            "._1yWgPveQ73QeYCdLcs6oFQ ._3i62HEXIhsNTd5-Z4uL3K._3Mds9UG-5yRsWUclIV_Y9q:hover ._2AVfXlAuHy0YQ4h1B3Kk2R",
+            ".BasicUI ._1yWgPveQ73QeYCdLcs6oFQ ._3i62HEXIhsNTd5-Z4uL3K._3Mds9UG-5yRsWUclIV_Y9q:hover ._2AVfXlAuHy0YQ4h1B3Kk2R"
+          ],
+          "defaults": {
+            "._1yWgPveQ73QeYCdLcs6oFQ ._3i62HEXIhsNTd5-Z4uL3K._3Mds9UG-5yRsWUclIV_Y9q:hover ._2AVfXlAuHy0YQ4h1B3Kk2R": {
+              "fill": "rgb(204, 204, 204)"
+            },
+            ".BasicUI ._1yWgPveQ73QeYCdLcs6oFQ ._3i62HEXIhsNTd5-Z4uL3K._3Mds9UG-5yRsWUclIV_Y9q:hover ._2AVfXlAuHy0YQ4h1B3Kk2R": {
+              "color": "rgb(204, 204, 204)"
+            }
+          },
+          "props": {
+            "fill": "rgb(204, 204, 204)",
+            "color": "rgb(204, 204, 204)"
+          }
+        }
+      },
+      "links": {
+        "color": {
+          "to": "J5rxTYCm_BasicHome",
+          "prop": "color",
+          "alpha": 0.51
+        }
+      }
+    }
+  ]
+}

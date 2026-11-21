@@ -1,0 +1,1078 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>chroma</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* Layout and control states follow magik (~/Projects/magik/assets/css: zones, hover loses to
+     focus and pressed, focus is never a ring). Colours are the theme being edited: each piece of
+     the editor takes the live colour of its Steam counterpart (THEME in the script), so editing a
+     Steam part repaints only what stands for it here. */
+  @font-face {
+    font-family: "JetBrains Mono";
+    src: url("/fonts/JetBrainsMono-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    src: url("/fonts/JetBrainsMono-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-display: swap;
+  }
+  :root {
+    /* Set by applyTheme() from Steam parts; these are Steam's defaults, for the first paint. */
+    --ui-bg: #0e141b;              /* Home screen background */
+    --ui-base: #0e141b;            /* the same, as one solid colour */
+    --ui-text: #dcdedf;            /* master text: row labels */
+    --ui-top: #ffffff;             /* top bar text: title, messages */
+    --ui-btn-bg: rgba(255, 255, 255, 0.15);    /* Tabs */
+    --ui-btn-text: #dcdedf;
+    --ui-btn-hi-bg: #ffffff;                   /* focused tab pill */
+    --ui-btn-hi-text: #23262e;
+    --ui-pri-bg: rgba(255, 255, 255, 0.15);    /* Selected tab */
+    --ui-pri-text: #ffffff;
+    --ui-pri-hi-bg: rgba(189, 197, 206, 0.48);
+    --ui-pri-hi-text: #ffffff;
+    --ui-cat: #ffffff;             /* "Trending among friends" heading */
+    --ui-area: #8b929a;            /* news date heading ("Yesterday") */
+    --ui-card: rgba(255, 255, 255, 0.15);      /* What's New */
+    --ui-card-title: #dcdedf;      /* news tile title */
+    --ui-tag-bg: #ffffff;          /* key cap */
+    --ui-tag-text: #23262e;
+    --ui-field-text: #ffffff;      /* search box */
+    --ui-field-hi-bg: rgba(255, 255, 255, 0.3);
+    --ui-field-hi-text: #0e141b;
+    --ui-danger: #e5534b;          /* chroma's own */
+    --ui-locate: #f1ebe4;          /* the page's opposite (see applyTheme) */
+    /* Lines and quiet text: the colour of the text they sit with, faded. Steam draws few lines. */
+    --ui-muted: color-mix(in srgb, var(--ui-text) 68%, transparent);
+    --ui-row-line: color-mix(in srgb, var(--ui-text) 10%, transparent);
+    --ui-control: color-mix(in srgb, var(--ui-text) 26%, transparent);
+    --ui-card-line: color-mix(in srgb, var(--ui-card-title) 13%, transparent);
+    --ui-top-line: color-mix(in srgb, var(--ui-top) 13%, transparent);
+    --ui-area-line: color-mix(in srgb, var(--ui-area) 35%, transparent);
+    /* Transparency shows as a checkerboard under any colour with alpha. */
+    --checker: repeating-conic-gradient(color-mix(in srgb, var(--ui-base) 80%, var(--ui-text)) 0 25%,
+      var(--ui-base) 0 50%) 0 0 / 0.5rem 0.5rem;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    --radius: 0.5rem;
+    --radius-sm: 0.25rem;
+    --scrollbar-thickness: 0.75rem;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: var(--ui-base); color: var(--ui-text);
+    font: 400 0.8125rem/1.4 var(--font-mono); }
+  /* The page background (often a gradient) stays put while the list scrolls. */
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: var(--ui-bg); }
+  main { max-width: 960px; margin: 0 auto; padding: 0 1rem 3rem; }
+
+  /* Top bar: like Steam's, it sits on the page itself. */
+  header.bar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 1rem;
+    margin: 0 -1rem; padding: 1rem; background: color-mix(in srgb, var(--ui-base) 88%, transparent);
+    backdrop-filter: blur(8px); border-bottom: 1px solid var(--ui-top-line); color: var(--ui-top); }
+  h1 { margin: 0; font-size: 0.875rem; font-weight: 500; cursor: default; }
+  header a.home { color: inherit; font-size: 0.75rem; opacity: 0.75; text-decoration: none; }
+  header a.home:hover, header a.home:focus-visible { opacity: 1; text-decoration: underline; outline: none; }
+  #note { flex: 1; min-width: 0; font-size: 0.6875rem; opacity: 0.75;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #note.bad { color: var(--ui-danger); opacity: 1; }
+  /* Every header button as wide as the widest one. */
+  .actions { display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 0.5rem; }
+
+  /* Buttons are Steam's tabs: a plain fill, and the tab pill when hovered, focused or pressed.
+     Hover is the lowest state; it loses to focus and to pressed. */
+  button { padding: 0.5rem 0.875rem; border: 1px solid transparent; border-radius: var(--radius);
+    background: var(--ui-btn-bg); font: 400 0.75rem/1 var(--font-mono); color: var(--ui-btn-text);
+    white-space: nowrap; cursor: pointer;
+    transition: color 150ms ease-out, border-color 150ms ease-out, background-color 150ms ease-out; }
+  button:hover:not(:disabled), button:focus-visible {
+    outline: none; background-color: var(--ui-btn-hi-bg); color: var(--ui-btn-hi-text); }
+  button:active:not(:disabled) { background-color: var(--ui-btn-hi-bg); color: var(--ui-btn-hi-text);
+    opacity: 0.8; transition: none; }
+  button:disabled { opacity: 0.4; cursor: default; }
+  /* The main action is the selected tab. */
+  button.primary { background-color: var(--ui-pri-bg); color: var(--ui-pri-text); font-weight: 500; }
+  button.primary:hover:not(:disabled), button.primary:focus-visible, button.primary:active:not(:disabled) {
+    background-color: var(--ui-pri-hi-bg); color: var(--ui-pri-hi-text); }
+  button.armed, button.armed:hover, button.armed:focus-visible { border-color: var(--ui-danger);
+    background-color: color-mix(in srgb, var(--ui-danger) 14%, transparent); color: var(--ui-danger); }
+
+  /* Each category (Page / Blocks / Text) is a dropdown holding a flat list of rows, one per
+     element and state. The category box is a Steam card (What's New). */
+  .cat { margin-top: 1rem; border: 1px solid var(--ui-card-line); border-radius: var(--radius);
+    background: var(--ui-card); }
+  .cat > summary { display: flex; align-items: baseline; gap: 0.75rem; padding: 0.875rem 1rem;
+    list-style: none; cursor: pointer; border-radius: var(--radius); color: var(--ui-cat); }
+  .cat > summary::-webkit-details-marker { display: none; }
+  .cat > summary::before { content: "▸"; display: inline-block; width: 0.75rem;
+    transition: transform 150ms ease-out; }
+  .cat[open] > summary::before { transform: rotate(90deg); }
+  .cat > summary .accept-all { margin-left: auto; padding: 0.375rem 0.625rem; font-size: 0.6875rem; }
+  .cat > summary:hover { background: color-mix(in srgb, var(--ui-cat) 6%, transparent); }
+  .cat h2 { margin: 0; font-size: 1rem; font-weight: 500; }
+  /* Counts are Steam's key caps. */
+  .tag { padding: 0.0625rem 0.375rem; border-radius: var(--radius-sm); font-size: 0.6875rem;
+    background: var(--ui-tag-bg); color: var(--ui-tag-text); }
+  /* The rows hang off a guide line in the news date heading's colour. */
+  .rows { margin: 0 1rem 0.875rem 1.375rem; padding-left: 0.875rem; border-left: 1px solid var(--ui-area-line); }
+
+  /* Ghost button: no fill until hovered; red because it removes. */
+  .bin { padding: 0.3rem 0.4rem; background: none; color: var(--ui-muted); line-height: 0; }
+  .bin:hover:not(:disabled), .bin:focus-visible { background: color-mix(in srgb, var(--ui-danger) 14%, transparent);
+    color: var(--ui-danger); }
+  .bin svg { width: 0.875rem; height: 0.875rem; }
+
+  .row { position: relative; display: grid;
+    grid-template-columns: minmax(0, 1fr) 6.5rem 2.75rem minmax(8rem, 14rem) 2.75rem 7.5rem auto 1.875rem;
+    gap: 0.75rem; align-items: center; padding: 0.4375rem 0; border-top: 1px solid var(--ui-row-line); }
+  .rows > .row:first-child, .sub > summary + .row { border-top: 0; }
+  /* Each category is split under collapsible subheadings (catalogue `group`), in the category heading's colour. */
+  .sub { margin-top: 0.5rem; }
+  .sub > summary { display: flex; align-items: baseline; gap: 0.5rem; padding: 0.375rem 0; list-style: none;
+    cursor: pointer; font-size: 0.75rem; font-weight: 500; color: var(--ui-cat); opacity: 0.75; }
+  .sub > summary::-webkit-details-marker { display: none; }
+  .sub > summary::before { content: "▸"; display: inline-block; width: 0.625rem; transition: transform 150ms ease-out; }
+  .sub[open] > summary::before { transform: rotate(90deg); }
+  .sub > summary:hover { opacity: 1; }
+  .rows > .sub:first-child { margin-top: 0; }
+  .row.linked > :not(.name):not(.type):not(.bin) { opacity: 0.5; }
+  /* Pointed at: a mark on the guide line in the page's opposite colour, so it always shows. */
+  .row.locating::before { content: ""; position: absolute; left: calc(-0.875rem - 2px); top: 0.25rem;
+    bottom: 0.25rem; width: 3px; border-radius: 2px; background: var(--ui-locate); }
+  .row .reset { padding: 0.375rem 0.625rem; font-size: 0.6875rem; }
+  .blur { --thumb: var(--ui-text); background: linear-gradient(to right, transparent, var(--ui-control)); }
+  .name { display: flex; align-items: center; gap: 0.75rem; min-width: 0; font-size: 0.75rem;
+    color: var(--ui-card-title); }
+  .name .text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .type { font-size: 0.75rem; color: var(--ui-area); white-space: nowrap; }
+  /* Two-way choice (root background: black or white), drawn as Steam's tabs; the chosen one is
+     the selected tab. */
+  .seg { display: inline-flex; gap: 0.25rem; flex: none; }
+  .seg button { display: inline-flex; align-items: center; padding: 0.375rem 0.5rem; }
+  button[aria-pressed="true"] { background-color: var(--ui-pri-bg); color: var(--ui-pri-text);
+    border-color: var(--ui-pri-text); }
+  /* On/off switch, Steam's tab colours: off is a plain tab, on is the focused tab pill. */
+  .switch { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.75rem;
+    color: var(--ui-text); cursor: pointer; }
+  .switch input { appearance: none; position: relative; flex: none; width: 1.875rem; height: 1.125rem;
+    margin: 0; border: 1px solid transparent; border-radius: 999px; background: var(--ui-btn-bg);
+    cursor: pointer; transition: background-color 150ms ease-out; }
+  .switch input::before { content: ""; position: absolute; top: 2px; left: 2px; width: 0.75rem;
+    height: 0.75rem; border-radius: 50%; background: var(--ui-btn-text);
+    transition: transform 150ms ease-out, background-color 150ms ease-out; }
+  .switch input:checked { background: var(--ui-btn-hi-bg); }
+  .switch input:checked::before { transform: translateX(0.75rem); background: var(--ui-btn-hi-text); }
+  .switch input:focus-visible { outline: none; border-color: var(--ui-text); }
+  /* Defaults switch (header): when on, its knob is Steam's own logo (SVGIcon_SteamLogo). */
+  .switch.steam input:checked::before { border-radius: 0; background: var(--ui-btn-hi-text);
+    -webkit-mask: var(--steam-logo) center / contain no-repeat; mask: var(--steam-logo) center / contain no-repeat; }
+  :root { --steam-logo: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 256 256%22%3E%3Cpath d=%22M127.374,5.355c-64.404,0-117.167,49.661-122.18,112.77l65.712,27.171 c5.567-3.808,12.293-6.032,19.53-6.032c0.649,0,1.294,0.017,1.934,0.051l29.226-42.354c0-0.202-0.005-0.399-0.005-0.598 c0-25.496,20.74-46.241,46.237-46.241c25.498,0,46.238,20.745,46.238,46.241c0,25.494-20.74,46.242-46.238,46.242 c-0.352,0-0.698-0.011-1.047-0.021l-41.68,29.741c0.022,0.546,0.041,1.095,0.041,1.644c0,19.141-15.569,34.707-34.706,34.707 c-16.796,0-30.843-11.99-34.026-27.869l-46.993-19.43c14.55,51.464,61.831,89.189,117.957,89.189 c67.713,0,122.604-54.893,122.604-122.604C249.979,60.244,195.086,5.355,127.374,5.355%22/%3E%3Cpath d=%22M82.026,191.387l-15.061-6.22c2.67,5.56,7.285,10.208,13.418,12.767 c13.25,5.521,28.531-0.771,34.054-14.027c2.674-6.416,2.694-13.5,0.04-19.93c-2.646-6.431-7.64-11.451-14.063-14.129 c-6.371-2.647-13.196-2.552-19.198-0.291l15.561,6.437c9.776,4.073,14.396,15.299,10.324,25.071 C103.031,190.841,91.801,195.464,82.026,191.387%22/%3E%3Cpath d=%22M198.639,96.359c0-16.987-13.82-30.809-30.809-30.809c-16.987,0-30.813,13.821-30.813,30.809 c0,16.988,13.824,30.806,30.813,30.806S198.639,113.347,198.639,96.359 M144.736,96.306c0-12.783,10.363-23.142,23.145-23.142 c12.783,0,23.145,10.359,23.145,23.142c0,12.783-10.36,23.142-23.145,23.142C155.1,119.447,144.736,109.089,144.736,96.306%22/%3E%3C/svg%3E"); }
+  .seg i { width: 0.625rem; height: 0.625rem; border-radius: 50%; box-shadow: 0 0 0 1px var(--ui-control); }
+  .name b { font-weight: 500; }
+
+  /* The colour swatch: opens the wheel. The colour sits over a checkerboard so alpha shows. */
+  .swatch, .swatch:hover:not(:disabled), .swatch:focus-visible, .swatch:active:not(:disabled) {
+    position: relative; width: 2.75rem; height: 1.75rem; padding: 0; border: 1px solid var(--ui-control);
+    border-radius: var(--radius-sm); background: var(--checker); overflow: hidden; opacity: 1; }
+  .swatch:hover:not(:disabled), .swatch:focus-visible { border-color: var(--ui-text); }
+  .swatch:disabled { opacity: 1; }
+  .swatch span { position: absolute; inset: 0.125rem; border-radius: 0.125rem; }
+
+  /* Sliders take the row's colour: the opacity track runs from clear to the colour itself. */
+  .slide { -webkit-appearance: none; appearance: none; width: 100%; height: 0.875rem; margin: 0;
+    border: 1px solid var(--ui-control); border-radius: 999px; cursor: pointer; }
+  .slide:disabled { cursor: default; }
+  .slide:focus-visible { outline: none; border-color: var(--ui-text); }
+  .slide::-webkit-slider-thumb { -webkit-appearance: none; width: 1rem; height: 1rem;
+    border: 2px solid #fff; border-radius: 50%; background: var(--thumb, #000);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.35); }
+  .alpha { --thumb: var(--c, #000); background: linear-gradient(to right, transparent, var(--c, #000)), var(--checker); }
+  .pct { font-size: 0.6875rem; color: var(--ui-muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* The value: hex, editable, copyable. A search box: its text, and its focus fill. */
+  .hex { width: 100%; padding: 0.375rem 0.5rem; border: 1px solid color-mix(in srgb, var(--ui-field-text) 26%, transparent);
+    border-radius: var(--radius-sm); background: none;
+    font: 400 0.75rem/1.2 var(--font-mono); color: var(--ui-field-text);
+    transition: border-color 150ms ease-out, background-color 150ms ease-out; }
+  .hex.dflt { color: color-mix(in srgb, var(--ui-field-text) 65%, transparent); }
+  .hex::placeholder { color: color-mix(in srgb, var(--ui-field-text) 45%, transparent); }
+  .hex:hover:not(:focus):not(:disabled) { border-color: color-mix(in srgb, var(--ui-field-text) 50%, transparent); }
+  .hex:focus { outline: none; border-color: transparent; background: var(--ui-field-hi-bg); color: var(--ui-field-hi-text); }
+  .hex.invalid { border-color: var(--ui-danger); }
+
+
+  /* The colour wheel pop-up: a card over the page. Hue round the rim, saturation inward,
+     brightness below. */
+  .picker { position: absolute; z-index: 20; width: 13.5rem; padding: 0.75rem;
+    display: flex; flex-direction: column; gap: 0.625rem;
+    border: 1px solid var(--ui-card-line); border-radius: var(--radius);
+    background: linear-gradient(var(--ui-card), var(--ui-card)), var(--ui-base);
+    box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.35); }
+  .picker[hidden] { display: none; }
+  .wheel { position: relative; width: 12rem; height: 12rem; border-radius: 50%; cursor: crosshair;
+    touch-action: none; background: radial-gradient(closest-side, #fff, rgba(255, 255, 255, 0)),
+      conic-gradient(red, #ff0, lime, cyan, blue, #f0f, red); }
+  .wheel-dim { position: absolute; inset: 0; border-radius: 50%; background: #000; pointer-events: none; }
+  .wheel-dot { position: absolute; width: 0.875rem; height: 0.875rem; margin: -0.4375rem 0 0 -0.4375rem;
+    border: 2px solid #fff; border-radius: 50%; pointer-events: none;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3); }
+  .bright { background: linear-gradient(to right, #000, var(--full, #fff)); --thumb: var(--pick, #000); }
+  .picker-head { font-size: 0.6875rem; color: var(--ui-area); }
+  .recent { display: grid; grid-template-columns: repeat(8, 1fr); gap: 0.25rem; }
+  .recent button, .recent button:hover, .recent button:focus-visible { position: relative; aspect-ratio: 1;
+    padding: 0; border: 1px solid var(--ui-control); border-radius: var(--radius-sm);
+    background: var(--checker); overflow: hidden; }
+  .recent button:hover, .recent button:focus-visible { border-color: var(--ui-text); }
+  .recent button span { position: absolute; inset: 0.0625rem; border-radius: 0.125rem; }
+  .recent-empty { grid-column: 1 / -1; font-size: 0.6875rem; color: var(--ui-muted); }
+
+  /* Scrollbars: a thin thumb that only shows while hovered (magik shell.css). */
+  ::-webkit-scrollbar { width: var(--scrollbar-thickness); height: var(--scrollbar-thickness); }
+  ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { background: transparent; }
+  ::-webkit-scrollbar-thumb { background-color: transparent; background-clip: padding-box;
+    border: calc(var(--scrollbar-thickness) / 3) solid transparent; border-radius: var(--scrollbar-thickness); }
+  :hover::-webkit-scrollbar-thumb { background-color: var(--ui-control); }
+  ::-webkit-scrollbar-thumb:hover { background-color: var(--ui-muted); }
+
+  @media (max-width: 720px) {
+    header.bar { flex-wrap: wrap; }
+    .row { grid-template-columns: 1fr 2.75rem 2.75rem auto; }
+    .row .slide { grid-column: 1 / -1; }
+    .hex { grid-column: 1 / 3; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="bar">
+    <h1 id="status">chroma</h1>
+    <a class="home" href="/" title="chroma-picker: a whole theme from a mode and a hue">Picker</a>
+    <span id="note"></span>
+    <label class="switch steam"><input id="defaults" type="checkbox" role="switch" aria-label="Steam Defaults"></label>
+    <div class="actions">
+      <button id="trawl">Trawl</button>
+      <button id="refresh">Refresh</button>
+      <button id="resetall">Reset All</button>
+      <button id="export" class="primary">Export</button>
+    </div>
+  </header>
+  <div id="cats"></div>
+</main>
+<div id="picker" class="picker" hidden>
+  <div class="wheel"><div class="wheel-dim"></div><span class="wheel-dot"></span></div>
+  <input class="slide bright" type="range" min="0" max="100" step="1" aria-label="Brightness">
+  <div class="picker-head">Recent</div>
+  <div class="recent"></div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const edits = new Map(); // part -> { prop: value }
+const renders = [];      // every row's render; re-run after any change so linked rows follow
+const partsById = new Map();
+let followMaster = true;
+let masterKey = null;    // "part|prop" that linked rows follow
+let linkedRows = [];     // { part, prop, link } for every row that can follow the master
+
+// Each piece of the editor takes the live colour of its Steam counterpart (see applyTheme).
+// A part missing from the catalog leaves the stylesheet's value: Steam's default.
+const THEME = {
+  '--ui-bg': ['J5rxTYCm_BasicHome', 'background'],                 // page: Home screen
+  '--ui-text': ['J5rxTYCm_BasicHome', 'color'],                    // row labels: master text
+  '--ui-top': ['BasicUI ehWSiALG_Header', 'color'],                // title, messages: top bar
+  '--ui-btn-bg': ['awNNWnmm_Tab', 'background'],                   // buttons: tabs
+  '--ui-btn-text': ['awNNWnmm_Tab', 'color'],
+  '--ui-btn-hi-bg': ['awNNWnmm_Tab', 'highlight:background'],      // hover/focus: tab pill
+  '--ui-btn-hi-text': ['awNNWnmm_Tab', 'highlight:color'],
+  '--ui-pri-bg': ['awNNWnmm_Tab.awNNWnmm_Selected', 'background'], // Export: selected tab
+  '--ui-pri-text': ['awNNWnmm_Tab.awNNWnmm_Selected', 'color'],
+  '--ui-pri-hi-bg': ['awNNWnmm_Tab.awNNWnmm_Selected', 'highlight:background'],
+  '--ui-pri-hi-text': ['awNNWnmm_Tab.awNNWnmm_Selected', 'highlight:color'],
+  '--ui-cat': ['BasicUI jZ3E2b5l_StoreCarouselCtn jZ3E2b5l_Header', 'color'], // "Trending among friends"
+  '--ui-area': ['Kp4Buf0X_EventTime', 'color'],                    // "Yesterday", "This week"
+  '--ui-card': ['Kp4Buf0X_EventInfo', 'background'],              // What's New
+  '--ui-card-title': ['Kp4Buf0X_Title', 'color'],                  // news tile title
+  '--ui-tag-bg': ['V39niyMX_KeyCap', 'background'],                // key cap
+  '--ui-tag-text': ['V39niyMX_KeyCap', 'color'],
+  '--ui-field-text': ['GXJzUoT6_SearchBox', 'color'],              // search box
+  '--ui-field-hi-bg': ['GXJzUoT6_SearchAndTitleContainer', 'highlight:background'],
+  '--ui-field-hi-text': ['GXJzUoT6_SearchBox', 'highlight:color'],
+};
+
+// Rows are listed by screen area (steamui-watch module), top of the screen first, then by name.
+const AREA_ORDER = [
+  'header', 'searchbar', 'gamepadtabbedpage', 'gamepadui', 'backgroundglass', 'gamepadhome',
+  'gamepadhomerecentgames', 'basicgamecarousel', 'appportrait', 'libraryassetimage',
+  'gamepadhomewhatsnew', 'recentlycompleted', 'homestorecarousel', 'gamecapsule', 'appdetailsheader',
+  'appdetailsfriendssection', 'steamavatar', 'actionbuttonlegenditem', 'footer', 'footericons',
+];
+const areaRank = module => { const i = AREA_ORDER.indexOf(module); return i < 0 ? AREA_ORDER.length : i; };
+
+const CATS = [['palette', 'Palette'], ['page', 'Page'], ['blocks', 'Blocks'], ['text', 'Text']];
+// Which category a row belongs to: font colours apart from everything filled.
+// Palette rows (a Steam colour -> yours, everywhere in Steam) have their own category.
+const catOf = (p, prop) => p.palette ? 'palette' : prop === 'color' ? 'text' : p.page ? 'page' : 'blocks';
+
+// A state's name from the selectors Steam uses for it: mouse hover, controller focus, or both.
+function stateName(p, state) {
+  if (state === 'pressed') return 'Click';
+  const sels = p.states?.[state]?.selectors ?? [];
+  const hover = sels.some(s => /:hover/.test(s));
+  const focus = sels.some(s => /\.gpfocus|:focus/.test(s));
+  return hover && focus ? 'Hover, Focus' : focus ? 'Focus' : 'Hover';
+}
+// Subheadings (catalogue `group`): home's sections in screen order, then other pages and the side
+// menus; parts without a known `group` go last, under Other. Palette rows split by kind.
+const GROUPS = ['Home', 'Header & Footer', 'Game Tile', 'Tabs', "What's New", 'Friends', 'Activity', 'Widgets',
+  'Indicators', 'Game Page', 'Library', 'Media', 'Settings', 'Main Menu', 'Quick Access', 'Other'];
+const PALETTE_GROUPS = ['Backgrounds', 'Text'];
+const groupOf = p => p.palette ? PALETTE_GROUPS[p.palette === 'bg' ? 0 : 1]
+  : GROUPS.includes(p.group) ? p.group : 'Other';
+const STATE_RANK = { '': 0, Hover: 1, 'Hover, Focus': 2, Focus: 3, Click: 4 };
+
+// Every name in the editor is Title Case: "Tab, selected" shows as "Tab, Selected".
+const titleCase = s => s.replace(/(^|[^\p{L}\p{N}'’])(\p{Ll})/gu, (_, pre, c) => pre + c.toUpperCase());
+
+// A row's name and state: "Tab" + "Hover", "Tab Border" + "Focus", "Activity Buttons Icon".
+function rowLabel(p, key) {
+  const [state, prop] = key.includes(':') ? key.split(':') : [null, key];
+  const suffix = prop === 'border-color' ? ' border' : prop === 'fill' && !/icon/i.test(p.label) ? ' icon' : '';
+  const name = titleCase(p.label + suffix);
+  return { name, state: state ? stateName(p, state) : '' };
+}
+
+let noteTimer = null;
+function note(text, bad = false, keep = false) {
+  clearTimeout(noteTimer);
+  $('#note').textContent = text;
+  $('#note').className = bad ? 'bad' : '';
+  if (!bad && !keep && text) noteTimer = setTimeout(() => note(''), 8000);
+}
+
+async function api(method, url, data) {
+  const res = await fetch(url, { method, headers: { 'content-type': 'application/json' },
+    body: data ? JSON.stringify(data) : undefined });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || res.statusText);
+  return json;
+}
+
+// ─── Colour values ──────────────────────────────────────────────────────────
+
+// "rgb(1, 2, 3)", "rgba(1, 2, 3, .5)", "#rrggbb", "#rrggbbaa" -> { hex, a }; anything else -> null
+function parseColor(s) {
+  let m = /^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,\s/]+([\d.]+))?\s*\)$/.exec(s);
+  if (m) {
+    const hex = '#' + m.slice(1, 4).map(n => Number(n).toString(16).padStart(2, '0')).join('');
+    return { hex, a: m[4] === undefined ? 1 : Number(m[4]) };
+  }
+  m = /^#([0-9a-f]{6})([0-9a-f]{2})?$/i.exec(s);
+  if (m) return { hex: '#' + m[1].toLowerCase(), a: m[2] ? parseInt(m[2], 16) / 255 : 1 };
+  return null;
+}
+
+// What a person types or pastes: also "#abc" and hex without the "#".
+function parseInput(s) {
+  s = s.trim();
+  const short = /^#?([0-9a-f]{3})$/i.exec(s);
+  if (short) s = '#' + [...short[1]].map(ch => ch + ch).join('');
+  else if (/^[0-9a-f]{6}([0-9a-f]{2})?$/i.test(s)) s = '#' + s;
+  return parseColor(s);
+}
+
+// "#rrggbb", or "#rrggbbaa" when not opaque.
+function toHex(hex, a) {
+  if (a >= 0.999) return hex;
+  return hex + Math.round(Math.max(0, a) * 255).toString(16).padStart(2, '0');
+}
+
+const rgbOf = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+
+function hsvToHex(h, s, v) {
+  const f = n => {
+    const k = (n + h / 60) % 6;
+    return v - v * s * Math.max(0, Math.min(k, 4 - k, 1));
+  };
+  return '#' + [f(5), f(3), f(1)].map(x => Math.round(x * 255).toString(16).padStart(2, '0')).join('');
+}
+
+function hexToHsv(hex) {
+  const [r, g, b] = rgbOf(hex).map(n => n / 255);
+  const max = Math.max(r, g, b);
+  const d = max - Math.min(r, g, b);
+  let h = 0;
+  if (d) {
+    h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    h = (h * 60 + 360) % 360;
+  }
+  return { h, s: max ? d / max : 0, v: max };
+}
+
+// One solid colour for any value, gradients included: the average of its colour stops.
+function solidOf(value, fallback) {
+  const stops = (value.match(/rgba?\([^)]*\)|#[0-9a-f]{6}(?:[0-9a-f]{2})?\b/gi) || [])
+    .map(parseColor).filter(Boolean);
+  if (!stops.length) return fallback;
+  const sum = [0, 0, 0];
+  for (const c of stops) rgbOf(c.hex).forEach((n, i) => { sum[i] += n; });
+  return '#' + sum.map(n => Math.round(n / stops.length).toString(16).padStart(2, '0')).join('');
+}
+
+const luminance = hex => {
+  const [r, g, b] = rgbOf(hex).map(n => n / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+// Recently chosen colours, kept in this browser for the wheel's grid.
+const RECENT_KEY = 'chroma.recent';
+function loadRecent() {
+  try { return JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch { return []; }
+}
+function remember(value) {
+  if (!value || !parseColor(value)) return;
+  const list = [value, ...loadRecent().filter(v => v !== value)].slice(0, 24);
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify(list)); } catch { /* private window */ }
+}
+
+// ─── Preview and edits ──────────────────────────────────────────────────────
+
+// Preview at most one request at a time; coalesce input that arrives meanwhile.
+let inflight = false, dirty = false;
+async function pushPreview() {
+  if (inflight) { dirty = true; return; }
+  inflight = true;
+  try {
+    const list = [...edits].map(([part, set]) => ({ part, set }));
+    // palette: true says this page shows the palette rows, so their absence means they were reset.
+    const r = await api('POST', '/api/preview', { edits: list, followMaster, palette: true });
+    if (r.skipped.length) note(`Not in this build's catalogue: ${r.skipped.join(', ')}`, true);
+  } catch (e) {
+    note(`Preview failed: ${e.message}`, true);
+  } finally {
+    inflight = false;
+    if (dirty) { dirty = false; pushPreview(); }
+    // A state being shown in Steam was drawn with the old value: draw it again.
+    else if (JSON.parse(locSent)?.key?.includes(':') && locSent === locWant) {
+      const { part, key } = JSON.parse(locWant);
+      locSent = 'null';
+      locate(part, locEl, key);
+    }
+  }
+}
+
+function setEdit(part, prop, value) {
+  const set = { ...(edits.get(part) || {}) };
+  if (value === null) delete set[prop]; else set[prop] = value;
+  Object.keys(set).length ? edits.set(part, set) : edits.delete(part);
+  pushPreview();
+}
+
+function renderAll() {
+  for (const r of renders) r();
+  applyTheme();
+}
+
+// Master's value scaled by a link's alpha, or null when the master is unedited.
+function followedValue(link) {
+  const c = parseColor(edits.get(link.to)?.[link.prop] ?? '');
+  return c ? toHex(c.hex, c.a * link.alpha) : null;
+}
+
+// What a part shows for a prop ("color", "highlight:background"): its own edit, else the
+// master's (when it follows), else Steam's default.
+function shownValue(partId, key, p = partsById.get(partId)) {
+  if (!p) return null;
+  const [state, prop] = key.includes(':') ? key.split(':') : [null, key];
+  const dflt = state ? p.states?.[state]?.props?.[prop] : p.props?.[prop];
+  const link = !state && p.links?.[prop];
+  const following = !!(link && followMaster);
+  const cur = following ? null : edits.get(partId)?.[key] ?? null;
+  return { following, link, cur, dflt, value: cur ?? (following ? followedValue(link) : null) ?? dflt };
+}
+
+// Unfollowing keeps every linked row where it was: its own edit becomes the followed value
+// (or is cleared when it was showing Steam's default), ready for small adjustments.
+function snapshotFollowed() {
+  for (const { part, prop, link } of linkedRows) {
+    const set = { ...(edits.get(part) || {}) };
+    const v = followedValue(link);
+    if (v) set[prop] = v; else delete set[prop];
+    Object.keys(set).length ? edits.set(part, set) : edits.delete(part);
+  }
+}
+
+// Repaint the editor in the theme being edited.
+function applyTheme() {
+  const root = document.documentElement.style;
+  for (const [token, [part, key]] of Object.entries(THEME)) {
+    const value = shownValue(part, key)?.value;
+    value ? root.setProperty(token, value) : root.removeProperty(token);
+  }
+  // The page as one solid colour, for what needs one (checkerboard, wheel pop-up, top bar).
+  const base = solidOf(shownValue(...THEME['--ui-bg'])?.value ?? '', '#0e141b');
+  root.setProperty('--ui-base', base);
+  root.setProperty('--ui-locate', '#' + rgbOf(base).map(n => (255 - n).toString(16).padStart(2, '0')).join(''));
+  const dark = luminance(base) < 0.5;
+  root.setProperty('color-scheme', dark ? 'dark' : 'light');
+  root.setProperty('--ui-danger', dark ? '#e5534b' : '#b4232c');
+}
+
+// ─── Rows ───────────────────────────────────────────────────────────────────
+
+// A row's name: one line, cut with an ellipsis.
+function nameText(text, bold = false) {
+  const box = document.createElement('span');
+  box.className = 'text';
+  const inner = document.createElement(bold ? 'b' : 'span');
+  inner.textContent = text;
+  box.append(inner);
+  return box;
+}
+
+// One row: an element in one state, e.g. "Tab (Hover)". Pointing at it outlines the element in Steam.
+// `pending`: a Trawl Data row. Editable like any row (previewed, not saved until accepted), with
+// Accept / Discard for its element in place of Reset / bin.
+function row(p, prop, pending = false) {
+  const el = document.createElement('div');
+  el.className = 'row';
+  el.innerHTML = `
+    <span class="name"></span>
+    <span class="type"></span>
+    <button class="swatch" aria-label="Colour"><span></span></button>
+    <input class="slide alpha" type="range" min="0" max="100" step="1" aria-label="Opacity">
+    <span class="pct"></span>
+    <input class="hex" type="text" spellcheck="false" autocomplete="off" aria-label="Hex Value">
+    <button class="reset">Reset</button>`;
+  // The master row stands for all text; removing its part isn't offered here.
+  el.append(pending ? discardButton(p) : masterKey === `${p.part}|${prop}` ? document.createElement('span') : binButton(p));
+  const [nameEl, typeEl, swatch, alpha, pct, hexIn, reset] = el.children;
+  const label = rowLabel(p, prop);
+  const isMaster = masterKey === `${p.part}|${prop}`;
+  const link = p.links?.[prop];
+  const textEl = nameText(isMaster ? 'All Text' : label.name, isMaster);
+  nameEl.append(textEl);
+  typeEl.textContent = label.state;
+  if (link && !pending) linkedRows.push({ part: p.part, prop, link });
+
+  const shown = () => shownValue(p.part, prop, pending ? p : undefined);
+  const set = value => { setEdit(p.part, prop, value); renderAll(); };
+
+  const render = () => {
+    const { following, cur, dflt, value } = shown();
+    const c = parseColor(value);
+    swatch.firstChild.style.background = value; // gradients show as themselves
+    el.style.setProperty('--c', c?.hex ?? '#000000');
+    alpha.value = Math.round((c?.a ?? 1) * 100);
+    pct.textContent = `${alpha.value}%`;
+    if (document.activeElement !== hexIn) {
+      hexIn.value = c ? toHex(c.hex, c.a) : '';
+      hexIn.placeholder = c ? '' : 'gradient';
+      hexIn.classList.remove('invalid');
+    }
+    hexIn.classList.toggle('dflt', !cur);
+
+    el.classList.toggle('linked', following);
+    swatch.disabled = alpha.disabled = hexIn.disabled = following;
+    reset.disabled = following || !cur;
+  };
+
+  alpha.addEventListener('input', () => {
+    const c = parseColor(shown().value) ?? { hex: '#000000' };
+    set(toHex(c.hex, alpha.value / 100));
+  });
+  alpha.addEventListener('change', () => remember(shown().cur));
+  hexIn.addEventListener('input', () => {
+    const c = parseInput(hexIn.value);
+    hexIn.classList.toggle('invalid', !c);
+    if (c) set(toHex(c.hex, c.a));
+  });
+  hexIn.addEventListener('keydown', e => { if (e.key === 'Enter') hexIn.blur(); });
+  hexIn.addEventListener('blur', () => { remember(shown().cur); render(); });
+  reset.addEventListener('click', () => set(null));
+  swatch.addEventListener('click', () => openPicker({
+    anchor: swatch, part: p.part, key: prop, card: el,
+    value: () => shown().value,
+    // The wheel picks hue/saturation/brightness; the row keeps its own opacity.
+    apply: hex => set(toHex(hex, parseColor(shown().value)?.a ?? 1)),
+    applyFull: value => set(value),
+  }));
+  if (p.part === HOME && prop === 'background' && partsById.has(ROOT_BG)) typeEl.append(rootChoice());
+  if (isMaster) typeEl.append(linkSwitch());
+  if (pending) {
+    const acceptBtn = reset.cloneNode(false); // drops Reset's listener
+    acceptBtn.className = 'reset';
+    acceptBtn.textContent = 'Accept';
+    acceptBtn.addEventListener('click', () => acceptTrawl([p.part]));
+    reset.replaceWith(acceptBtn);
+  }
+  el.addEventListener('pointerenter', () => locate(p.part, el, prop));
+  el.addEventListener('pointerleave', () => locate(null));
+  el.addEventListener('focusin', () => locate(p.part, el, prop));
+  el.addEventListener('focusout', () => locate(null));
+  renders.push(render);
+  return el;
+}
+
+// The root background (behind the home screen) is black or white, chosen beside the Home screen
+// row rather than as a row of its own.
+const HOME = 'J5rxTYCm_BasicHome';
+const ROOT_BG = 'J5rxTYCm_BasicUiRoot.J5rxTYCm_BlackBackground';
+const ROOT_CHOICES = [['Black', '#000000'], ['White', '#ffffff']];
+function rootChoice() {
+  const el = document.createElement('span');
+  el.className = 'seg';
+  const buttons = ROOT_CHOICES.map(([name, hex]) => {
+    const b = document.createElement('button');
+    b.innerHTML = `<i style="background:${hex}"></i>`;
+    b.setAttribute('aria-label', `Root Background: ${name}`);
+    b.addEventListener('click', () => {
+      // Steam's own value needs no edit.
+      const dflt = parseColor(shownValue(ROOT_BG, 'background').dflt ?? '');
+      setEdit(ROOT_BG, 'background', dflt && toHex(dflt.hex, dflt.a) === hex ? null : hex);
+      renderAll();
+    });
+    el.append(b);
+    return [b, hex];
+  });
+  renders.push(() => {
+    const c = parseColor(shownValue(ROOT_BG, 'background').value ?? '');
+    const white = c && luminance(c.hex) > 0.5;
+    for (const [b, hex] of buttons) b.setAttribute('aria-pressed', String((hex === '#ffffff') === !!white));
+  });
+  return el;
+}
+
+// Background glass is the layer Steam fades in over the home screen while a menu or dialog is
+// open: it blurs and tints what's behind it. Shown as Home screen's blur, not as a row of its own.
+const GLASS = 'fjbDEq55_BackgroundGlass.fjbDEq55_DrawBackground';
+const BLUR_MAX = 40; // px at 100%; Steam's 8px shows as 20%
+const pxOf = v => Number(/blur\(([\d.]+)px\)/.exec(v ?? '')?.[1] ?? 0);
+function blurRow() {
+  const el = document.createElement('div');
+  el.className = 'row';
+  el.innerHTML = `
+    <span class="name"></span>
+    <span class="type"></span>
+    <span></span>
+    <input class="slide blur" type="range" min="0" max="100" step="1" aria-label="Blur">
+    <span class="pct"></span>
+    <span></span>
+    <button class="reset">Reset</button>
+    <span></span>`;
+  const [nameEl, , , range, pct, , reset] = el.children;
+  const textEl = nameText('Blur');
+  nameEl.append(textEl);
+  const dflt = () => pxOf(partsById.get(GLASS).props['backdrop-filter']);
+  const render = () => {
+    range.value = Math.round(pxOf(shownValue(GLASS, 'backdrop-filter').value) / BLUR_MAX * 100);
+    pct.textContent = `${range.value}%`;
+    reset.disabled = !edits.has(GLASS);
+  };
+  range.addEventListener('input', () => {
+    const px = Math.round(Number(range.value) * BLUR_MAX / 10) / 10; // to 0.1px
+    setEdit(GLASS, 'backdrop-filter', px === dflt() ? null : `blur(${px}px)`);
+    renderAll();
+  });
+  // Clears the glass entirely: its blur and any tint edit, since the tint has no row.
+  reset.addEventListener('click', () => {
+    edits.delete(GLASS);
+    pushPreview();
+    renderAll();
+  });
+  el.addEventListener('pointerenter', () => locate(GLASS, el)); // opens Steam's main menu
+  el.addEventListener('pointerleave', () => locate(null));
+  renders.push(render);
+  return el;
+}
+
+// ─── Colour wheel ───────────────────────────────────────────────────────────
+
+const picker = $('#picker');
+const wheel = picker.querySelector('.wheel');
+const bright = picker.querySelector('.bright');
+let pk = null; // the open picker: its row's callbacks plus the current h, s, v
+
+function openPicker(target) {
+  if (pk?.anchor === target.anchor) { closePicker(); return; }
+  closePicker();
+  const c = parseColor(target.value()) ?? { hex: '#000000' };
+  pk = { ...target, start: target.value(), ...hexToHsv(c.hex) };
+  picker.hidden = false;
+  drawPicker();
+  renderRecent();
+  const r = target.anchor.getBoundingClientRect();
+  const left = Math.min(r.left, innerWidth - picker.offsetWidth - 8);
+  const below = r.bottom + 6 + picker.offsetHeight <= innerHeight;
+  picker.style.left = `${left + scrollX}px`;
+  picker.style.top = `${(below ? r.bottom + 6 : r.top - picker.offsetHeight - 6) + scrollY}px`;
+}
+
+function closePicker() {
+  if (!pk) return;
+  const end = pk.value();
+  if (end !== pk.start) remember(end);
+  picker.hidden = true;
+  pk = null;
+}
+
+function drawPicker() {
+  const R = wheel.clientWidth / 2;
+  const rad = pk.h * Math.PI / 180;
+  const dot = wheel.querySelector('.wheel-dot');
+  dot.style.left = `${R + pk.s * R * Math.sin(rad)}px`;
+  dot.style.top = `${R - pk.s * R * Math.cos(rad)}px`;
+  dot.style.background = hsvToHex(pk.h, pk.s, pk.v);
+  wheel.querySelector('.wheel-dim').style.opacity = 1 - pk.v;
+  bright.value = Math.round(pk.v * 100);
+  bright.style.setProperty('--full', hsvToHex(pk.h, pk.s, 1));
+  bright.style.setProperty('--pick', hsvToHex(pk.h, pk.s, pk.v));
+}
+
+function renderRecent() {
+  const box = picker.querySelector('.recent');
+  box.innerHTML = '';
+  const list = loadRecent();
+  if (!list.length) {
+    box.innerHTML = '<span class="recent-empty">Colours you pick are kept here.</span>';
+    return;
+  }
+  for (const value of list) {
+    const b = document.createElement('button');
+    b.setAttribute('aria-label', value);
+    b.innerHTML = '<span></span>';
+    b.firstChild.style.background = value;
+    b.addEventListener('click', () => {
+      pk.applyFull(value);
+      Object.assign(pk, hexToHsv(parseColor(value).hex));
+      drawPicker();
+    });
+    box.append(b);
+  }
+}
+
+function pickAt(e) {
+  const r = wheel.getBoundingClientRect();
+  const R = r.width / 2;
+  const dx = e.clientX - r.left - R;
+  const dy = e.clientY - r.top - R;
+  pk.h = (Math.atan2(dx, -dy) * 180 / Math.PI + 360) % 360;
+  pk.s = Math.min(1, Math.hypot(dx, dy) / R);
+  if (pk.v < 0.05) pk.v = 1; // a hue picked in the dark would stay black
+  pk.apply(hsvToHex(pk.h, pk.s, pk.v));
+  drawPicker();
+}
+
+wheel.addEventListener('pointerdown', e => { wheel.setPointerCapture(e.pointerId); pickAt(e); });
+wheel.addEventListener('pointermove', e => { if (wheel.hasPointerCapture(e.pointerId)) pickAt(e); });
+bright.addEventListener('input', () => {
+  pk.v = bright.value / 100;
+  pk.apply(hsvToHex(pk.h, pk.s, pk.v));
+  drawPicker();
+});
+// Keep the element outlined in Steam while working in its picker.
+picker.addEventListener('pointerenter', () => { if (pk) locate(pk.part, pk.card, pk.key); });
+picker.addEventListener('pointerleave', () => locate(null));
+document.addEventListener('pointerdown', e => {
+  if (pk && !picker.contains(e.target) && !pk.anchor.contains(e.target)) closePicker();
+}, true);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePicker(); });
+
+// ─── Locate in Steam ────────────────────────────────────────────────────────
+
+// Shows the pointed-at row's subject in Steam (see the server's locate): a state row's colours,
+// the glass row's menu, or an outline. Latest wins: while a request is out, only the newest
+// wanted row is sent next.
+let locWant = 'null', locSent = 'null', locBusy = false, locEl = null;
+async function locate(part, el = null, key = null) {
+  locEl?.classList.remove('locating');
+  locEl = el;
+  el?.classList.add('locating');
+  locWant = JSON.stringify(part ? { part, key } : null);
+  if (locBusy) return;
+  locBusy = true;
+  try {
+    while (locWant !== locSent) {
+      const want = locWant;
+      await api('POST', '/api/locate', JSON.parse(want) ?? {});
+      locSent = want;
+    }
+  } catch { /* outline is a nicety; ignore */ } finally {
+    locBusy = false;
+  }
+}
+
+// ─── Page ───────────────────────────────────────────────────────────────────
+
+// Cut-off text (row names, messages) gets the browser's tooltip with the full text; nothing else does.
+document.addEventListener('pointerover', e => {
+  const el = e.target.closest?.('.name .text, #note');
+  if (el) el.title = el.scrollWidth > el.clientWidth ? el.textContent : '';
+});
+
+// "Link" switch: on, linked text rows follow All text. Turning it off keeps every row where it was.
+function linkSwitch() {
+  const el = document.createElement('label');
+  el.className = 'switch';
+  el.innerHTML = '<input type="checkbox" role="switch"><span>Link</span>';
+  const box = el.firstChild;
+  box.addEventListener('change', () => {
+    if (!box.checked) snapshotFollowed();
+    followMaster = box.checked;
+    renderAll();
+    pushPreview();
+  });
+  renders.push(() => { box.checked = followMaster; });
+  return el;
+}
+
+// Trawl results waiting to be accepted into the catalog: [{ id, kind, part, keys }]. Page memory
+// only, so a reload drops them.
+let trawlItems = [];
+let lastState = null;
+
+async function acceptTrawl(ids) {
+  try {
+    const r = await api('POST', '/api/accept', { ids });
+    await load(); // keeps the Trawl Data edits, these included
+    trawlItems = trawlItems.filter(i => !ids.includes(i.id));
+    render(lastState);
+    pushPreview(); // saves their edits, now that they're in the catalog
+    note(`Accepted ${r.accepted} element${r.accepted === 1 ? '' : 's'}.`);
+  } catch (e) {
+    note(`Accept failed: ${e.message}`, true);
+  }
+}
+
+function discardButton(p) {
+  const b = document.createElement('button');
+  b.className = 'bin';
+  b.setAttribute('aria-label', `Discard ${titleCase(p.label)}`);
+  b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  b.addEventListener('click', () => {
+    // Drop the element and any edits made to its Trawl Data rows.
+    const item = trawlItems.find(i => i.id === p.part);
+    trawlItems = trawlItems.filter(i => i !== item);
+    for (const key of item?.keys ?? []) if (edits.get(p.part)?.[key] !== undefined) setEdit(p.part, key, null);
+    render(lastState);
+  });
+  return b;
+}
+
+function binButton(p) {
+  const bin = document.createElement('button');
+  bin.className = 'bin';
+  bin.setAttribute('aria-label', `Remove ${titleCase(p.label)}`);
+  bin.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>';
+  bin.addEventListener('click', async () => {
+    try {
+      await api('POST', '/api/remove', { part: p.part });
+      note(`Removed "${titleCase(p.label)}".`);
+      load();
+    } catch (e) {
+      note(`Remove failed: ${e.message}`, true);
+    }
+  });
+  return bin;
+}
+
+// Closed categories, remembered in this browser.
+const CLOSED_KEY = 'chroma.closed';
+const closed = (() => {
+  try { return new Set(JSON.parse(localStorage.getItem(CLOSED_KEY)) || []); } catch { return new Set(); }
+})();
+function saveClosed() {
+  try { localStorage.setItem(CLOSED_KEY, JSON.stringify([...closed])); } catch { /* private window */ }
+}
+
+// A subheading: a dropdown like the categories, remembered closed the same way.
+function subheading(cat, group, count) {
+  const id = `${cat}/${group}`;
+  const det = document.createElement('details');
+  det.className = 'sub';
+  det.open = !closed.has(id);
+  det.innerHTML = `<summary><span></span><span class="tag">${count}</span></summary>`;
+  det.querySelector('summary span').textContent = group;
+  det.addEventListener('toggle', () => {
+    det.open ? closed.delete(id) : closed.add(id);
+    saveClosed();
+  });
+  return det;
+}
+
+function render(state) {
+  closePicker();
+  if (!state.exact) note(`No catalogue for build ${state.build}; using ${state.catalogBuild}. Trawl to start one.`, true);
+
+  const firstLink = state.parts.flatMap(p => Object.values(p.links ?? {}))[0];
+  masterKey = firstLink ? `${firstLink.to}|${firstLink.prop}` : null;
+  partsById.clear();
+  for (const p of state.parts) partsById.set(p.part, p);
+
+  // category -> [{ p, key, label }], sorted by subheading, then screen area, name, state.
+  const lists = new Map(CATS.map(([id]) => [id, []]));
+  for (const p of state.parts) {
+    const keys = [
+      ...Object.keys(p.props),
+      ...Object.entries(p.states ?? {}).flatMap(([s, st]) => Object.keys(st.props).map(prop => `${s}:${prop}`)),
+    ].filter(k => `${p.part}|${k}` !== masterKey && `${p.part}|${k}` !== `${ROOT_BG}|background` &&
+      p.part !== GLASS);
+    for (const key of keys) lists.get(catOf(p, key.split(':').pop())).push({ p, key, label: rowLabel(p, key) });
+  }
+  const rank = (cat, p) => cat === 'palette' ? PALETTE_GROUPS.indexOf(groupOf(p)) * 1000 + p.order
+    : GROUPS.indexOf(groupOf(p));
+  for (const [cat, list] of lists) {
+    list.sort((a, b) => rank(cat, a.p) - rank(cat, b.p) ||
+      areaRank(a.p.area) - areaRank(b.p.area) || a.label.name.localeCompare(b.label.name) ||
+      STATE_RANK[a.label.state] - STATE_RANK[b.label.state]);
+  }
+
+  const box = $('#cats');
+  box.innerHTML = '';
+  renders.length = 0;
+  linkedRows = [];
+  if (trawlItems.length) box.append(trawlSection());
+  for (const [cat, title] of CATS) {
+    const list = lists.get(cat);
+    const master = cat === 'text' && masterKey && partsById.get(masterKey.split('|')[0]);
+    if (!list.length && !master) continue;
+    const det = document.createElement('details');
+    det.className = 'cat';
+    det.open = !closed.has(cat);
+    det.innerHTML = `<summary><h2>${title}</h2><span class="tag">${list.length + (master ? 1 : 0)}</span>` +
+      `</summary><div class="rows"></div>`;
+    det.addEventListener('toggle', () => {
+      det.open ? closed.delete(cat) : closed.add(cat);
+      saveClosed();
+    });
+    const rows = det.querySelector('.rows');
+    if (master) rows.append(row(master, masterKey.split('|')[1]));
+    let group = null, into = rows;
+    for (const { p, key } of list) {
+      if (groupOf(p) !== group) {
+        group = groupOf(p);
+        into = subheading(cat, group, list.filter(r => groupOf(r.p) === group).length);
+        rows.append(into);
+      }
+      into.append(row(p, key));
+      if (p.part === HOME && key === 'background' && partsById.get(GLASS)?.props['backdrop-filter']) into.append(blurRow());
+    }
+    box.append(det);
+  }
+  renderAll();
+}
+
+// "Trawl Data": the last trawl's results, read-only, each element with Accept / Discard; rows sorted
+// like the lists below (fills before text, then by screen area, name, state).
+function trawlSection() {
+  const catRank = Object.fromEntries(CATS.map(([id], i) => [id, i]));
+  const list = trawlItems.flatMap(({ part, keys }) => {
+    const p = { ...part, onScreen: 1 };
+    return keys.map(key => ({ p, key, label: rowLabel(p, key), cat: catOf(p, key.split(':').pop()) }));
+  });
+  list.sort((a, b) => catRank[a.cat] - catRank[b.cat] || areaRank(a.p.area) - areaRank(b.p.area) ||
+    a.label.name.localeCompare(b.label.name) || STATE_RANK[a.label.state] - STATE_RANK[b.label.state]);
+  const det = document.createElement('details');
+  det.className = 'cat';
+  det.open = true;
+  det.innerHTML = `<summary><h2>Trawl Data</h2><span class="tag">${list.length}</span>` +
+    `<button class="accept-all">Accept All</button></summary><div class="rows"></div>`;
+  det.querySelector('.accept-all').addEventListener('click', e => {
+    e.preventDefault(); // a button in the summary would also fold the section
+    acceptTrawl(trawlItems.map(i => i.id));
+  });
+  const rows = det.querySelector('.rows');
+  for (const { p, key } of list) rows.append(row(p, key, true));
+  return det;
+}
+
+async function load() {
+  try {
+    const state = await api('GET', '/api/state');
+    // Trawl Data edits aren't in the profile until accepted: keep them across the reload.
+    const unsaved = trawlItems.map(i => [i.id, edits.get(i.id)]).filter(([, set]) => set);
+    edits.clear();
+    for (const { part, set } of state.profile.edits) edits.set(part, { ...set });
+    for (const [id, set] of unsaved) edits.set(id, { ...edits.get(id), ...set });
+    followMaster = state.profile.followMaster !== false;
+    lastState = state;
+    render(state);
+    pushPreview(); // also clears Steam of edits that weren't saved (Trawl Data before a reload)
+  } catch (e) {
+    note(`Not connected: ${e.message}`, true);
+  }
+}
+
+$('#refresh').addEventListener('click', load);
+
+// Two clicks: the first arms the button for a few seconds, the second clears every edit.
+let resetTimer = null;
+$('#resetall').addEventListener('click', () => {
+  const btn = $('#resetall');
+  if (!resetTimer) {
+    btn.textContent = 'Confirm';
+    btn.classList.add('armed');
+    note('Click Confirm to reset every colour to Steam\'s defaults.', false, true);
+    resetTimer = setTimeout(() => { disarm(); note(''); }, 4000);
+    return;
+  }
+  disarm();
+  edits.clear();
+  followMaster = true;
+  renderAll();
+  pushPreview();
+  note('All colours reset to Steam defaults.');
+});
+function disarm() {
+  clearTimeout(resetTimer);
+  resetTimer = null;
+  $('#resetall').textContent = 'Reset All';
+  $('#resetall').classList.remove('armed');
+}
+// Defaults switch: Steam shows its own colours while on. Off again on reload or leaving the page.
+const setDefaults = on => api('POST', '/api/defaults', { on })
+  .then(() => { $('#defaults').checked = on; })
+  .catch(e => { $('#defaults').checked = !on; note(`Defaults failed: ${e.message}`, true); });
+$('#defaults').addEventListener('change', () => setDefaults($('#defaults').checked));
+// Leaving the page takes the preview out of Steam too (it would sit above CSS Loader's themes);
+// a reload puts it back (load() pushes it).
+addEventListener('pagehide', () => {
+  navigator.sendBeacon('/api/defaults', JSON.stringify({ on: false }));
+  navigator.sendBeacon('/api/preview/clear');
+});
+setDefaults(false);
+
+$('#trawl').addEventListener('click', async () => {
+  const btn = $('#trawl');
+  btn.disabled = true;
+  note('Trawling…', false, true);
+  try {
+    const r = await api('POST', '/api/trawl');
+    trawlItems = r.items;
+    await load();
+    const added = r.items.filter(i => i.kind === 'added').length;
+    const updated = r.items.length - added;
+    note(`Trawl: ${added} new, ${updated} with new rows (${r.found} on screen` +
+      `${r.unresolved ? `, ${r.unresolved} without a steamui-watch name skipped` : ''}).`);
+  } catch (e) {
+    note(`Trawl failed: ${e.message}`, true);
+  } finally {
+    btn.disabled = false;
+  }
+});
+$('#export').addEventListener('click', async () => {
+  note('Exporting…', false, true);
+  try {
+    const r = await api('POST', '/api/export');
+    const extra = r.skipped.length ? ` Skipped (not in catalogue): ${r.skipped.join(', ')}.` : '';
+    note(`Exported ${r.id}. ${r.installed ? r.note + ' ' : ''}Zip: ${r.zip}.${extra}`, false, true);
+  } catch (e) {
+    note(`Export failed: ${e.message}`, true);
+  }
+});
+
+load();
+</script>
+</body>
+</html>

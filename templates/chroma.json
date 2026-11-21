@@ -1,0 +1,474 @@
+{
+  "name": "chroma",
+  "note": "The picker template: a hand-made theme (dev editor profile \"mine\", 2026-11-21). Every picker theme is this, turned to another hue.",
+  "steamBuild": "1794536281",
+  "followMaster": true,
+  "palette": [
+    {
+      "kind": "bg",
+      "steam": "rgb(14, 20, 27)",
+      "name": "Darkest Background"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgb(35, 38, 46)",
+      "name": "Dark Panel"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgba(255, 255, 255, 0.15)",
+      "name": "White 15%"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgba(255, 255, 255, 0.3)",
+      "name": "White 30%"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgb(26, 159, 255)",
+      "name": "Steam Blue"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgba(172, 178, 201, 0.14)",
+      "name": "Blue Grey 14%"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgba(172, 178, 201, 0.28)",
+      "name": "Blue Grey 28%"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgba(189, 197, 206, 0.48)",
+      "name": "Grey 48%"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgb(50, 57, 65)",
+      "name": "Hover Grey"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgb(56, 100, 131)",
+      "name": "Steel Blue"
+    },
+    {
+      "kind": "bg",
+      "steam": "rgb(35, 108, 57)",
+      "name": "Green"
+    },
+    {
+      "kind": "fg",
+      "steam": "rgb(220, 222, 223)",
+      "name": "Light Grey Text"
+    },
+    {
+      "kind": "fg",
+      "steam": "rgb(184, 188, 191)",
+      "name": "Soft Grey Text"
+    },
+    {
+      "kind": "fg",
+      "steam": "rgb(139, 146, 154)",
+      "name": "Grey Text"
+    },
+    {
+      "kind": "fg",
+      "steam": "rgb(89, 191, 64)",
+      "name": "Green Text"
+    },
+    {
+      "kind": "fg",
+      "steam": "rgb(112, 112, 112)",
+      "name": "Dim Grey Text"
+    }
+  ],
+  "edits": [
+    {
+      "part": "J5rxTYCm_BasicHome",
+      "set": {
+        "background": "#967cb5",
+        "color": "#fffafa"
+      }
+    },
+    {
+      "part": "ehWSiALG_HeaderItem.ehWSiALG_Clickable",
+      "set": {
+        "highlight:background": "#e89dd2b8"
+      }
+    },
+    {
+      "part": "BasicUI ehWSiALG_Header",
+      "set": {
+        "color": "#ffffff",
+        "background": "#2000ff"
+      }
+    },
+    {
+      "part": "ehWSiALG_HeaderItem.ehWSiALG_BatteryIcon ehWSiALG_Percentage",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "ehWSiALG_Clock:not(.ehWSiALG_DashboardBar)",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "GXJzUoT6_SearchAndTitleContainer",
+      "set": {
+        "color": "#ffffff",
+        "highlight:background": "#e89bd759"
+      }
+    },
+    {
+      "part": "GXJzUoT6_SearchBox",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "GXJzUoT6_SearchAndTitleContainer GXJzUoT6_SearchIconLeft",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "GXJzUoT6_SearchAndTitleContainer GXJzUoT6_SearchIconRight",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "awNNWnmm_Tab",
+      "set": {
+        "color": "#ffffff",
+        "background": "#f8f6ff33",
+        "highlight:background": "#ffc2dcb3"
+      }
+    },
+    {
+      "part": "awNNWnmm_Tab.awNNWnmm_Selected",
+      "set": {
+        "color": "#ffffff",
+        "background": "#ff95ac",
+        "highlight:background": "#ff95ac99"
+      }
+    },
+    {
+      "part": "tjjBDocm_RecentGamesHeaderLabel",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "E9TkPRCA_AppPortraitBanner",
+      "set": {
+        "color": "#ffffff",
+        "background": "#f49aff"
+      }
+    },
+    {
+      "part": "BasicUI E9TkPRCA_PortraitMessage E9TkPRCA_Message",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "Kp4Buf0X_EventTime",
+      "set": {
+        "color": "#d9ffe3a1"
+      }
+    },
+    {
+      "part": "Kp4Buf0X_GameIconAndName Kp4Buf0X_GameName",
+      "set": {
+        "color": "#97faffa8"
+      }
+    },
+    {
+      "part": "Kp4Buf0X_Title",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "263GZqVc_DownloadInfo",
+      "set": {
+        "color": "#b395ffa8"
+      }
+    },
+    {
+      "part": "263GZqVc_GameIconAndName 263GZqVc_GameName",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "BasicUI 263GZqVc_RecentlyCompleted 263GZqVc_Header",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "263GZqVc_DownloadInfo 263GZqVc_Bytes",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "BasicUI jZ3E2b5l_StoreCarouselCtn jZ3E2b5l_Header",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "gFV3re5o_FriendsPlayingNowBadge",
+      "set": {
+        "color": "#ffffff",
+        "background": "#9ba7ff"
+      }
+    },
+    {
+      "part": "WRdNzaB6_ActionButtonLegend WRdNzaB6_ActionButtonLabel",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "8JybvNJN_Light 8JybvNJN_Background",
+      "set": {
+        "color": "#ffffff"
+      }
+    },
+    {
+      "part": "J5rxTYCm_BasicUiRoot.J5rxTYCm_BlackBackground",
+      "set": {
+        "background": "#ffffff"
+      }
+    },
+    {
+      "part": "QcGXoqZ7_HeaderTopEdge",
+      "set": {
+        "background": "#9aa3ff"
+      }
+    },
+    {
+      "part": "C1nS6cpP_SubMessage",
+      "set": {
+        "color": "#55ff0080"
+      }
+    },
+    {
+      "part": "ehWSiALG_Header::before",
+      "set": {
+        "background": "#e89bd759",
+        "highlight:background": "#e89bd759"
+      }
+    },
+    {
+      "part": "awNNWnmm_GamepadTabbedPage.awNNWnmm_IsUnderHeader awNNWnmm_TabHeaderRowWrapper::before",
+      "set": {
+        "background": "#e89bd740"
+      }
+    },
+    {
+      "part": "E9TkPRCA_LibraryItemIcons > E9TkPRCA_ControllerSupportIcon",
+      "set": {
+        "background": "#9ba7ff"
+      }
+    },
+    {
+      "part": "Kp4Buf0X_EventInfo",
+      "set": {
+        "background": "#ffffff1a",
+        "highlight:background": "#c96dc226"
+      }
+    },
+    {
+      "part": "BasicUI hZCRXDi9_GreyBackground",
+      "set": {
+        "background": "#ff49fd4d"
+      }
+    },
+    {
+      "part": "LLGUZIsx_GameCapsule",
+      "set": {
+        "background": "#c2d3ff"
+      }
+    },
+    {
+      "part": "WRdNzaB6_ActionButtonLegend",
+      "set": {
+        "highlight:background": "#84bdff66"
+      }
+    },
+    {
+      "part": "7Vn4DG64_FavoriteFriend",
+      "set": {
+        "background": "#ffa0ee33"
+      }
+    },
+    {
+      "part": "7Vn4DG64_InGameGame 7Vn4DG64_FriendsPlaying",
+      "set": {
+        "color": "#adffae"
+      }
+    },
+    {
+      "part": "ingame 4ZxDBJu4_playerName",
+      "set": {
+        "color": "#adffae"
+      }
+    },
+    {
+      "part": "C1nS6cpP_BasicGameCarouselItem C1nS6cpP_TextBoxCarouselContents",
+      "set": {
+        "background": "#ffa0ee33"
+      }
+    },
+    {
+      "part": "T9b8HuYr_PersonalCalendarWidget T9b8HuYr_PersonalCalendarWidgetDay",
+      "set": {
+        "background": "#ffa0ee33"
+      }
+    },
+    {
+      "part": "V4hIzfTZ_DiscoveryQueueWidgetCtn",
+      "set": {
+        "background": "#ffa0ee33"
+      }
+    },
+    {
+      "part": "7fWhymK6_RatingBar 7fWhymK6_LikeButton.7fWhymK6_CanClick",
+      "set": {
+        "highlight:background": "#84bdff66",
+        "fill": "#ffbaf5"
+      }
+    },
+    {
+      "part": "7fWhymK6_ActivityCommentThread",
+      "set": {
+        "background": "#ffa0ee33"
+      }
+    },
+    {
+      "part": "LLGUZIsx_InLibrary",
+      "set": {
+        "background": "#bfc3ff"
+      }
+    },
+    {
+      "part": "LLGUZIsx_GameCapsule LLGUZIsx_BottomBar",
+      "set": {
+        "background": "#ff5fc74d"
+      }
+    },
+    {
+      "part": "LlewZgR3_URLBar::after",
+      "set": {
+        "background": "#ffffff"
+      }
+    },
+    {
+      "part": "palette:bg:rgb(14, 20, 27)",
+      "set": {
+        "background": "#967cb5"
+      }
+    },
+    {
+      "part": "palette:bg:rgb(35, 38, 46)",
+      "set": {
+        "background": "#a189bc"
+      }
+    },
+    {
+      "part": "palette:bg:rgba(255, 255, 255, 0.15)",
+      "set": {
+        "background": "#f8f6ff33"
+      }
+    },
+    {
+      "part": "palette:bg:rgba(255, 255, 255, 0.3)",
+      "set": {
+        "background": "#e89dd2b8"
+      }
+    },
+    {
+      "part": "palette:bg:rgb(26, 159, 255)",
+      "set": {
+        "background": "#f49aff"
+      }
+    },
+    {
+      "part": "palette:bg:rgba(172, 178, 201, 0.14)",
+      "set": {
+        "background": "#ffa0ee33"
+      }
+    },
+    {
+      "part": "palette:bg:rgba(172, 178, 201, 0.28)",
+      "set": {
+        "background": "#c96dc226"
+      }
+    },
+    {
+      "part": "palette:bg:rgba(189, 197, 206, 0.48)",
+      "set": {
+        "background": "#ff95ac99"
+      }
+    },
+    {
+      "part": "palette:bg:rgb(50, 57, 65)",
+      "set": {
+        "background": "#84bdff66"
+      }
+    },
+    {
+      "part": "palette:bg:rgb(56, 100, 131)",
+      "set": {
+        "background": "#ffa0ee33"
+      }
+    },
+    {
+      "part": "palette:bg:rgb(35, 108, 57)",
+      "set": {
+        "background": "#9ba7ff"
+      }
+    },
+    {
+      "part": "palette:fg:rgb(220, 222, 223)",
+      "set": {
+        "color": "#fffafa"
+      }
+    },
+    {
+      "part": "palette:fg:rgb(139, 146, 154)",
+      "set": {
+        "color": "#fffafaa8"
+      }
+    },
+    {
+      "part": "palette:fg:rgb(89, 191, 64)",
+      "set": {
+        "color": "#adffae"
+      }
+    },
+    {
+      "part": "palette:fg:rgb(112, 112, 112)",
+      "set": {
+        "color": "#ffbaf5"
+      }
+    },
+    {
+      "part": "palette:fg:rgb(184, 188, 191)",
+      "set": {
+        "color": "#fffafad9"
+      }
+    }
+  ]
+}

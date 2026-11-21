@@ -1,0 +1,72 @@
+{
+  "name": "chroma-desktop",
+  "productName": "chroma",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Themes for Steam Big Picture: chroma's server and page in one window.",
+  "main": "main.js",
+  "desktopName": "chroma.desktop",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --linux AppImage pacman",
+    "dist:appimage": "electron-builder --linux AppImage",
+    "dist:arch": "electron-builder --linux pacman"
+  },
+  "devDependencies": {
+    "electron": "^45.4.1",
+    "electron-builder": "^26.18.0"
+  },
+  "author": "chroma",
+  "license": "MIT",
+  "homepage": "https://github.com/reiitenshi/chroma",
+  "build": {
+    "appId": "org.chroma.desktop",
+    "productName": "chroma",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "package.json",
+      "build/icon.png"
+    ],
+    "extraResources": [
+      {
+        "from": "../chroma.mjs",
+        "to": "chroma/chroma.mjs"
+      },
+      {
+        "from": "../editor",
+        "to": "chroma/editor"
+      },
+      {
+        "from": "../catalog",
+        "to": "chroma/catalog"
+      },
+      {
+        "from": "../templates",
+        "to": "chroma/templates"
+      }
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "pacman"
+      ],
+      "executableName": "chroma",
+      "icon": "build/icons",
+      "category": "Utility",
+      "maintainer": "chroma"
+    },
+    "appImage": {
+      "artifactName": "chroma-${version}.AppImage"
+    },
+    "pacman": {
+      "depends": [
+        "gtk3",
+        "nss",
+        "alsa-lib"
+      ]
+    }
+  }
+}

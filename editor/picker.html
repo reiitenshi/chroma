@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>chroma</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* chroma-picker: a whole theme from Dark / Light and a hue. The page wears the theme's main
+     background as it is picked. Type and controls follow the dev editor (/dev). */
+  @font-face {
+    font-family: "JetBrains Mono";
+    src: url("/fonts/JetBrainsMono-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    src: url("/fonts/JetBrainsMono-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-display: swap;
+  }
+  :root {
+    --ui-bg: #967cb5;              /* the theme's main background, set as the hue moves */
+    --ui-text: #fffafa;
+    --ui-danger: #ffb4ae;
+    --ui-line: color-mix(in srgb, var(--ui-text) 18%, transparent);
+    --ui-fill: color-mix(in srgb, var(--ui-text) 15%, transparent);
+    --ui-fill-hi: color-mix(in srgb, var(--ui-text) 30%, transparent);
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    --radius: 0.5rem;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; background: var(--ui-bg); color: var(--ui-text);
+    font: 400 0.8125rem/1.4 var(--font-mono); transition: background-color 200ms ease-out; }
+  main { max-width: 560px; margin: 0 auto; padding: 0 1rem 3rem; }
+
+  header.bar { display: flex; align-items: center; gap: 1rem; margin: 0 -1rem; padding: 1rem;
+    border-bottom: 1px solid var(--ui-line); }
+  h1 { margin: 0; font-size: 0.875rem; font-weight: 500; flex: 1; }
+  header a { color: inherit; font-size: 0.75rem; opacity: 0.75; text-decoration: none; }
+  header a:hover, header a:focus-visible { opacity: 1; text-decoration: underline; outline: none; }
+
+  section { margin-top: 1.5rem; }
+  h2 { margin: 0 0 0.625rem; font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; opacity: 0.75; }
+
+  button { padding: 0.5rem 0.875rem; border: 1px solid transparent; border-radius: var(--radius);
+    background: var(--ui-fill); font: 400 0.75rem/1 var(--font-mono); color: var(--ui-text);
+    cursor: pointer; transition: background-color 150ms ease-out; }
+  button:hover:not(:disabled), button:focus-visible { outline: none; background: var(--ui-fill-hi); }
+  button:disabled { opacity: 0.4; cursor: default; }
+  button[aria-pressed="true"] { background: var(--ui-text); color: var(--ui-bg); font-weight: 500; }
+
+  /* Dark / Light: two halves of one switch. */
+  .modes { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; padding: 0.25rem;
+    border-radius: calc(var(--radius) + 0.25rem); background: var(--ui-fill); }
+  .modes button { min-width: 6rem; background: none; }
+  .modes button[aria-pressed="true"] { background: var(--ui-text); }
+
+  /* Preview switch: a pill with a knob, like the dev editor's Defaults switch. */
+  .switch { display: inline-flex; align-items: center; gap: 0.625rem; cursor: pointer; font-size: 0.75rem; }
+  .switch input { appearance: none; width: 2.5rem; height: 1.375rem; margin: 0; border-radius: 1rem;
+    background: var(--ui-fill); border: 1px solid var(--ui-line); position: relative; cursor: pointer;
+    transition: background-color 150ms ease-out; }
+  .switch input::after { content: ""; position: absolute; top: 0.125rem; left: 0.125rem; width: 1rem; height: 1rem;
+    border-radius: 50%; background: var(--ui-text); opacity: 0.6; transition: transform 150ms ease-out, opacity 150ms; }
+  .switch input:checked { background: var(--ui-fill-hi); }
+  .switch input:checked::after { transform: translateX(1.125rem); opacity: 1; }
+  .switch input:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ui-fill-hi); }
+
+  /* The hue slider's track shows the main background at every hue. */
+  input[type="range"] { width: 100%; height: 2.25rem; margin: 0; appearance: none; background: none; cursor: pointer; }
+  input[type="range"]::-webkit-slider-runnable-track { height: 2.25rem; border-radius: var(--radius);
+    background: var(--track); border: 1px solid var(--ui-line); }
+  input[type="range"]::-moz-range-track { height: 2.25rem; border-radius: var(--radius);
+    background: var(--track); border: 1px solid var(--ui-line); }
+  input[type="range"]::-webkit-slider-thumb { appearance: none; width: 0.875rem; height: 2.75rem;
+    margin-top: -0.3125rem; border-radius: 0.25rem; background: var(--ui-text); border: 2px solid var(--ui-bg); }
+  input[type="range"]::-moz-range-thumb { width: 0.75rem; height: 2.5rem; border-radius: 0.25rem;
+    background: var(--ui-text); border: 2px solid var(--ui-bg); }
+  input[type="range"]:focus-visible { outline: none; }
+  input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--ui-fill-hi); }
+  .hue { display: flex; justify-content: space-between; margin-top: 0.375rem; font-size: 0.6875rem; opacity: 0.75; }
+
+  .save { display: flex; gap: 0.5rem; }
+  input[type="text"] { flex: 1; min-width: 0; padding: 0.5rem 0.75rem; border: 1px solid var(--ui-line);
+    border-radius: var(--radius); background: var(--ui-fill); color: var(--ui-text); font: inherit; }
+  input[type="text"]::placeholder { color: color-mix(in srgb, var(--ui-text) 60%, transparent); }
+  input[type="text"]:focus-visible { outline: none; border-color: var(--ui-text); }
+  #note { min-height: 1.4em; margin-top: 0.5rem; font-size: 0.6875rem; opacity: 0.85; }
+  #note.bad { color: var(--ui-danger); opacity: 1; }
+
+  /* Saved themes: a swatch of each one's main background, and its name. */
+  .saved { display: grid; gap: 0.375rem; }
+  .saved button { display: flex; align-items: center; gap: 0.625rem; width: 100%; text-align: left; }
+  .saved .sw { width: 1rem; height: 1rem; border-radius: 0.25rem; border: 1px solid var(--ui-line); flex: none; }
+  .saved .meta { margin-left: auto; opacity: 0.7; font-size: 0.6875rem; }
+  .saved button.current { outline: 1px solid var(--ui-text); }
+  .empty { opacity: 0.7; font-size: 0.75rem; }
+
+  /* Shown while chroma can't reach Steam: how to turn its debugging on. */
+  #steam { margin-top: 1rem; padding: 0.875rem 1rem; border: 1px solid var(--ui-line); border-radius: var(--radius);
+    background: var(--ui-fill); font-size: 0.75rem; }
+  #steam h3 { margin: 0 0 0.5rem; font-size: 0.8125rem; font-weight: 500; }
+  #steam p { margin: 0.375rem 0; }
+  #steam code { padding: 0.0625rem 0.25rem; border-radius: 0.25rem; background: var(--ui-fill); user-select: all; }
+  footer { margin-top: 2rem; font-size: 0.6875rem; opacity: 0.7; }
+</style>
+</head>
+<body>
+<main>
+  <header class="bar">
+    <h1>chroma</h1>
+    <a href="/dev" title="The per-element editor, for hand styling or an agent">Dev Mode</a>
+  </header>
+
+  <div id="steam" role="status" hidden></div>
+
+  <section>
+    <h2>Preview</h2>
+    <label class="switch"><input id="live" type="checkbox" role="switch" checked>
+      <span>Show in Steam while picking</span></label>
+  </section>
+
+  <section>
+    <h2>Mode</h2>
+    <div class="modes" role="group" aria-label="Mode">
+      <button type="button" data-mode="dark" aria-pressed="false">Dark</button>
+      <button type="button" data-mode="light" aria-pressed="true">Light</button>
+    </div>
+  </section>
+
+  <section>
+    <h2><label for="hue">Colour</label></h2>
+    <input id="hue" type="range" min="0" max="360" step="1" value="0">
+    <div class="hue"><span>Hue</span><span id="hueval"></span></div>
+  </section>
+
+  <section>
+    <h2><label for="name">Save As</label></h2>
+    <form class="save" id="save">
+      <input id="name" type="text" maxlength="40" placeholder="Theme name" autocomplete="off" required>
+      <button type="submit">Save</button>
+      <button type="button" id="export" title="Save, then install as a CSS Loader theme here and write a zip to Downloads">Export</button>
+    </form>
+    <div id="note" role="status"></div>
+  </section>
+
+  <section>
+    <h2>Saved Themes</h2>
+    <div class="saved" id="saved"></div>
+  </section>
+
+  <footer id="build"></footer>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const api = async (method, url, body) => {
+  const r = await fetch(url, { method, headers: { 'content-type': 'application/json' }, body: body && JSON.stringify(body) });
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || r.statusText);
+  return data;
+};
+const note = (text, bad = false) => { $('#note').textContent = text; $('#note').classList.toggle('bad', bad); };
+
+let pick = { mode: 'light', hue: 0 };
+let track = { light: [], dark: [] };
+let profiles = [];
+let current = null; // name of the saved theme being shown
+
+// The track's colour at a hue (stops every 15 degrees).
+const colourAt = (mode, hue) => track[mode][Math.round(hue / 15)] ?? '#967cb5';
+
+function paint() {
+  for (const b of document.querySelectorAll('.modes button')) b.setAttribute('aria-pressed', String(b.dataset.mode === pick.mode));
+  $('#hue').value = pick.hue;
+  $('#hueval').textContent = `${Math.round(pick.hue)}°`;
+  const stops = track[pick.mode].map((c, i) => `${c} ${(i / (track[pick.mode].length - 1) * 100).toFixed(1)}%`);
+  document.documentElement.style.setProperty('--track', `linear-gradient(90deg, ${stops.join(', ')})`);
+  document.documentElement.style.setProperty('--ui-bg', colourAt(pick.mode, pick.hue));
+  renderSaved();
+}
+
+function renderSaved() {
+  const box = $('#saved');
+  box.innerHTML = '';
+  if (!profiles.length) { box.innerHTML = '<div class="empty">None yet.</div>'; return; }
+  for (const p of profiles) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = p.name === current ? 'current' : '';
+    b.innerHTML = '<span class="sw"></span><span class="nm"></span><span class="meta"></span>';
+    b.querySelector('.sw').style.background = colourAt(p.mode, p.hue);
+    b.querySelector('.nm').textContent = p.name;
+    b.querySelector('.meta').textContent = `${p.mode === 'dark' ? 'Dark' : 'Light'} · ${Math.round(p.hue)}°`;
+    b.addEventListener('click', () => {
+      pick = { mode: p.mode, hue: p.hue };
+      current = p.name;
+      $('#name').value = p.name;
+      paint();
+      preview();
+    });
+    box.append(b);
+  }
+}
+
+// Live preview in Steam: one request at a time, always with the latest pick. Off with the
+// Preview switch (remembered in this browser).
+const LIVE_KEY = 'chroma.picker.preview';
+let live = true;
+try { live = localStorage.getItem(LIVE_KEY) !== 'off'; } catch { /* private window */ }
+$('#live').checked = live;
+$('#live').addEventListener('change', async e => {
+  live = e.target.checked;
+  try { localStorage.setItem(LIVE_KEY, live ? 'on' : 'off'); } catch { /* private window */ }
+  if (live) preview();
+  else try { await api('POST', '/api/preview/clear'); } catch (err) { note(err.message, true); }
+});
+
+// Leaving the page takes the preview out of Steam, so CSS Loader's themes show again.
+addEventListener('pagehide', () => navigator.sendBeacon('/api/preview/clear'));
+
+let busy = false, queued = false;
+async function preview() {
+  if (!live) return;
+  if (busy) { queued = true; return; }
+  busy = true;
+  try {
+    do {
+      queued = false;
+      await api('POST', '/api/picker/preview', pick);
+    } while (queued);
+    if (!$('#note').classList.contains('bad')) note('');
+  } catch (e) {
+    note(e.message, true);
+  } finally {
+    busy = false;
+  }
+}
+
+for (const b of document.querySelectorAll('.modes button')) {
+  b.addEventListener('click', () => { pick.mode = b.dataset.mode; current = null; paint(); preview(); });
+}
+$('#hue').addEventListener('input', e => { pick.hue = Number(e.target.value); current = null; paint(); preview(); });
+
+$('#save').addEventListener('submit', async e => {
+  e.preventDefault();
+  const name = $('#name').value.trim();
+  try {
+    const r = await api('POST', '/api/picker/save', { ...pick, name });
+    profiles = r.profiles;
+    current = name;
+    note(`Saved “${name}”.`);
+    renderSaved();
+  } catch (err) {
+    note(err.message, true);
+  }
+});
+
+// Export: save, then the theme goes into this machine's CSS Loader and a zip into Downloads.
+$('#export').addEventListener('click', async () => {
+  const name = $('#name').value.trim();
+  if (!name) { $('#name').reportValidity(); return; }
+  note('Exporting…');
+  try {
+    const r = await api('POST', '/api/picker/export', { ...pick, name });
+    profiles = r.profiles;
+    current = name;
+    renderSaved();
+    note(`Exported “${name}”. ${r.installed ? r.note + ' ' : ''}To send it: ${r.zip}`);
+  } catch (err) {
+    note(err.message, true);
+  }
+});
+
+// Steam's reachability: a how-to while it isn't, checked again every few seconds; the build note.
+const HOWTO = `<h3>chroma can't reach Steam</h3>
+  <p>chroma talks to Steam through Steam's debugging port. Turn it on once, then restart Steam:</p>
+  <p><b>Steam Deck:</b> Settings › System › turn on Developer Mode, then Settings › Developer ›
+    turn on CEF Remote Debugging. (Already on if Decky Loader is installed.)</p>
+  <p><b>Linux desktop:</b> run <code>touch ~/.steam/steam/.cef-enable-remote-debugging</code></p>
+  <p>Then open Steam in Big Picture mode. This message goes away by itself.</p>`;
+let steamOk = null;
+async function checkSteam() {
+  let s;
+  try { s = await api('GET', '/api/status'); } catch { s = { steam: false }; }
+  const box = $('#steam');
+  const ok = s.steam && s.bigPicture;
+  box.hidden = ok;
+  if (!s.steam) box.innerHTML = HOWTO;
+  else if (!s.bigPicture) box.innerHTML = `<h3>Steam is running, but not in Big Picture</h3>
+    <p>Closing Steam's window leaves Steam running in the background (system tray).</p>
+    <p>Open Big Picture to see the theme: Steam › View › Big Picture Mode, or the tray icon › Big Picture.</p>`;
+  $('#build').textContent = `Made for Steam stable build ${s.madeFor ?? ''}.` +
+    (s.build && s.build !== s.madeFor ? ` This Steam is build ${s.build}: best effort, some parts may not colour.` : '');
+  if (ok && steamOk === false) preview(); // Steam came up: show the pick there
+  steamOk = ok;
+  setTimeout(checkSteam, ok ? 15000 : 3000);
+}
+
+(async () => {
+  try {
+    const s = await api('GET', '/api/picker');
+    track = s.track;
+    profiles = s.profiles;
+    const last = profiles[0];
+    if (last) { pick = { mode: last.mode, hue: last.hue }; current = last.name; $('#name').value = last.name; }
+    else pick = { mode: 'light', hue: s.templateHue };
+    paint();
+    await checkSteam();
+    if (steamOk) preview();
+  } catch (e) {
+    note(e.message, true);
+  }
+})();
+</script>
+</body>
+</html>

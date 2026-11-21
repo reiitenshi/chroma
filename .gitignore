@@ -1,0 +1,9 @@
+# Private: colour profiles are personal (docs/design.md, "Profiles are private").
+profiles/
+
+# Downloaded steamui-watch map; refetched by chroma.mjs when older than 6h.
+cache/
+
+# Local tool state and old crawler output.
+.claude/
+out/
